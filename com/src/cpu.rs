@@ -1,4 +1,8 @@
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::prelude::*;
+
+use serde::Serialize;
 use crate::opcodes;
 
 bitflags! {
@@ -30,6 +34,39 @@ bitflags! {
 const STACK: u16 = 0x0100;
 const STACK_RESET: u8 = 0xfd;
 
+// u64
+pub struct Instruction(u8, u8, u8, u8);
+
+// u64 (u8 0s, u32 cycles, u16 (addr), u8 (value))
+pub struct MemoryEntry(u64, u16, u8);
+// u64 - u32 cycles, u8 value
+pub struct RegisterEntry(u64, u8);
+
+// u64  - u32 cycles, u16 value
+pub struct ProgramCounter(u64, u16);
+
+pub struct Trace {
+    // 
+    pub reads: Vec<u64>,
+    pub writes: Vec<u64>,
+
+    pub register_a: Vec<u64>,
+    pub register_x: Vec<u64>,
+    pub register_y: Vec<u64>,
+
+    pub program_counter: Vec<u64>,
+    pub stack_pointer: Vec<u64>,
+    pub status: Vec<u64>,
+
+    pub ops: Vec<u64>,
+}
+
+pub trait Traceable {
+    fn initialize_trace() -> Trace;
+    fn pad_zeroes(&mut self, size: usize);
+    fn write_trace(&self) -> std::io::Result<()>;
+}
+
 pub struct CPU {
     pub register_a: u8,
     pub register_x: u8,
@@ -38,6 +75,8 @@ pub struct CPU {
     pub program_counter: u16,
     pub stack_pointer: u8,
     memory: [u8; 0xFFFF],
+    trace: Trace,
+    cycles: u64,
 }
 
 #[derive(Debug)]
@@ -58,11 +97,11 @@ pub enum AddressingMode {
  * Data in memory is addressed using LE
  */
 pub trait Mem {
-    fn mem_read(&self, addr: u16) -> u8; 
+    fn mem_read(&mut self, addr: u16) -> u8; 
 
     fn mem_write(&mut self, addr: u16, data: u8);
     
-    fn mem_read_u16(&self, pos: u16) -> u16 {
+    fn mem_read_u16(&mut self, pos: u16) -> u16 {
         let lo = self.mem_read(pos) as u16;
         let hi = self.mem_read(pos + 1) as u16;
         (hi << 8) | (lo as u16)
@@ -78,12 +117,69 @@ pub trait Mem {
 
 impl Mem for CPU {
     
-    fn mem_read(&self, addr: u16) -> u8 { 
-        self.memory[addr as usize]
+    fn mem_read(&mut self, addr: u16) -> u8 { 
+        let value = self.memory[addr as usize];
+        self.trace.reads.push(MemoryEntry(self.cycles, addr, value));
+        value
     }
 
     fn mem_write(&mut self, addr: u16, data: u8) { 
         self.memory[addr as usize] = data;
+        self.trace.writes.push(MemoryEntry(self.cycles, addr, data));
+    }
+}
+
+impl Traceable for CPU {
+    fn initialize_trace() -> Trace {
+        let trace = Trace {
+            reads: Vec::new(),
+            writes: Vec::new(),
+            register_a: Vec::new(),
+            register_x: Vec::new(),
+            register_y: Vec::new(),
+            program_counter: Vec::new(),
+            stack_pointer: Vec::new(),
+            status: Vec::new(),
+            ops: Vec::new()
+        };
+
+        trace
+    }
+
+    fn pad_zeroes(&mut self, size: usize) {
+        //TODO: for memory, we shouldn't resize, we should just print the whole thing and chunk it into smaller inputs and pad any trailing using a separate function
+        //We're just going to cut the memory short for testing purposes (for now)
+        self.trace.reads.resize(size, MemoryEntry(0 as u64, 0 as u16, 0 as u8));
+        self.trace.writes.resize(size, MemoryEntry(0 as u64, 0 as u16, 0 as u8));
+
+        if self.trace.register_a.len() < size {
+            self.trace.register_a.resize(size, RegisterEntry(0 as u64, 0 as u8));
+        }
+        if self.trace.register_x.len() < size {
+            self.trace.register_x.resize(size, RegisterEntry(0 as u64, 0 as u8));
+        }
+        if self.trace.register_y.len() < size {
+            self.trace.register_y.resize(size, RegisterEntry(0 as u64, 0 as u8));
+        }
+        if self.trace.program_counter.len() < size {
+            self.trace.program_counter.resize(size, ProgramCounter(0 as u64, 0 as u16));
+        }
+        if self.trace.stack_pointer.len() < size {
+            self.trace.stack_pointer.resize(size, RegisterEntry(0 as u64, 0 as u8));
+        }
+        if self.trace.status.len() < size {
+            self.trace.status.resize(size, RegisterEntry(0 as u64, 0 as u8));
+        }
+        if self.trace.ops.len() < size {
+            self.trace.ops.resize(size, Instruction(0 as u8, 0 as u8, 0 as u8, 0 as u8));
+        }
+    }
+
+    fn write_trace(&self) -> std::io::Result<()> {
+        let condensed_vec = self.trace 
+        let toml = toml::to_string(&self.trace).unwrap();
+        let file = File::create("trace.toml");
+        file?.write_all(toml.as_bytes())
     }
 }
 
@@ -100,10 +196,12 @@ impl CPU {
             //TODO: in true NES emulation, the memory is initialized to randomized values
             //some games use this initial randomization to seed rngs
             memory: [0; 0xFFFF], 
+            trace: CPU::initialize_trace(),
+            cycles: 0,
         }
     }
 
-    fn get_operand_address(&self, mode: &AddressingMode) -> u16 {
+    fn get_operand_address(&mut self, mode: &AddressingMode) -> u16 {
         match mode {
             AddressingMode::Immediate => self.program_counter,
 
@@ -170,6 +268,13 @@ impl CPU {
         //On loading ROM, NES resets and then loads its first
         //instruction from this specific memory location 0xFFFC
         self.program_counter = self.mem_read_u16(0xFFFC);
+
+        self.trace.register_a.push(RegisterEntry(self.cycles, 0));
+        self.trace.register_x.push(RegisterEntry(self.cycles, 0));
+        self.trace.register_y.push(RegisterEntry(self.cycles, 0));
+        self.trace.status.push(RegisterEntry(self.cycles, self.status.bits()));
+        self.trace.stack_pointer.push(RegisterEntry(self.cycles, STACK_RESET));
+        self.trace.program_counter.push(ProgramCounter(self.cycles, 0xFFFC));
     }
 
     pub fn load_and_run(&mut self, program: Vec<u8>) {
@@ -178,12 +283,21 @@ impl CPU {
         self.run();
     }
 
-    pub fn load(&mut self, program: Vec<u8>) {
-        self.memory[0x0600 .. (0x0600 + program.len())].copy_from_slice(&program[..]);
+    pub fn load_with_trace(&mut self, program: Vec<u8>) {
+        // we need to initialize the memory in the read/write trace
+        //so rather than doing this quickly, we're gonna have to do it the slow way.
+        for i in 0x0600 .. (0x0600 + program.len()) {
+            self.mem_write(i as u16, program[i - 0x0600]);
+        }
         //FIXME: This seems like bit of a hack, no? We'll need to change this later.
         //Later on, we need to just assume the ROM itself will include a value at this address
         //We can add a special fn for test purposes
         self.mem_write_u16(0xFFFC, 0x0600);
+
+    }
+
+    pub fn load(&mut self, program: Vec<u8>) {
+        self.memory[0x0600 .. (0x0600 + program.len())].copy_from_slice(&program[..]);
     }
 
     fn ldy(&mut self, mode: &AddressingMode) {
@@ -204,8 +318,7 @@ impl CPU {
         let addr = self.get_operand_address(mode);
         let value = self.mem_read(addr);
 
-        self.register_a = value;
-        self.update_zero_and_negative_flags(self.register_a);
+        self.set_register_a(value);
     }
 
     fn sta(&mut self, mode: &AddressingMode) {
@@ -563,6 +676,16 @@ impl CPU {
             let program_counter_state = self.program_counter;
 
             let opcode = opcodes.get(&code).unwrap();
+            self.cycles += opcode.cycles as u64;
+
+            //TODO: Where's a better place to do this?
+            if self.cycles > 100 as u64 {
+                self.pad_zeroes(100);
+                if self.write_trace().is_err() {
+                    println!("problem printing");
+                }
+                return
+            }
 
             match code {
                 0xa9 | 0xa5 | 0xb5 | 0xad | 0xbd | 0xb9 | 0xa1 | 0xb1 => {
@@ -830,10 +953,7 @@ impl CPU {
                 }
 
                 /* TXA */
-                0x8a => {
-                    self.register_a = self.register_x;
-                    self.update_zero_and_negative_flags(self.register_a);
-                }
+                0x8a => self.set_register_a(self.register_x),
 
                 /* TXS */
                 0x9a => {
@@ -841,10 +961,7 @@ impl CPU {
                 }
 
                 /* TYA */
-                0x98 => {
-                    self.register_a = self.register_y;
-                    self.update_zero_and_negative_flags(self.register_a);
-                }
+                0x98 => self.set_register_a(self.register_y),
 
                 _ => todo!(),
             }
