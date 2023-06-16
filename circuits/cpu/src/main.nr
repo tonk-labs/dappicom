@@ -101,7 +101,6 @@ fn main(
     for i in 0..10 {
         let opcode = opcodes[i];
         assert(opcode == time_sorted_value[t_index]);
-        t_index = t_index + 1;
 
         let (updated_state, next_index) = cpu::perform_op(
             opcode, 
