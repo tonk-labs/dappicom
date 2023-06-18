@@ -15,14 +15,10 @@ fn perform_op(
     //if the program stops (ie. opcode == 0, then we will have padded the rest of the opcodes array with 0s and the program will not take anymore action)
     let mut tn_index = t_index;
     let mut new_state = state_array;
-    let mut params = (0,0,0);
-
-    let t = opcode - 0xa5 == 0;
-
+    let mut params = opcodes::get_op_parameters(opcode);
 
     //LDA operation
     if ( opcode == 0xa9 ) | ( opcode == 0xa5) | ( opcode == 0xb5) | ( opcode == 0xad) | ( opcode == 0xbd) | ( opcode == 0xb9) | ( opcode == 0xa1) | ( opcode == 0xb1) {        
-        params = opcodes::get_op_parameters(opcode);
         let (address, tnn_index) = get_address(
             params.2, t_index, state_array, 
             time_sorted_rw, time_sorted_addr, time_sorted_value, time_sorted_clk
@@ -32,73 +28,102 @@ fn perform_op(
         assert(time_sorted_rw[tnn_index] == 0);
         assert(time_sorted_clk[tnn_index] == state_array[6]);
         //update flags
+        new_state[5] = update_zero_and_negative_flags(state_array[5], new_state[0] as u8);
         tn_index = tnn_index + 1;
     };
 
 
     //TAX operation
-    if ( opcode == 0xAA) { 
+    if ( opcode == 0xAA ) { 
         new_state[0] = new_state[1];
         //update flags
+        new_state[5] = update_zero_and_negative_flags(state_array[5], new_state[1] as u8);
     }
 
     //INX operation
-    if ( opcode == 0xe8) { 
-        new_state[1] = new_state[1] + 1;
-        // wrap if the addition is more than 256
-        if new_state[1] == 256 {
-            new_state[1] = 0;
-        }
+    if ( opcode == 0xe8 ) { 
+        new_state[1] = wrapping_add(new_state[1], 1);
         //update flags
+        new_state[5] = update_zero_and_negative_flags(state_array[5], new_state[1] as u8);
     }
     
     ///* CLD */
-    if (  opcode == 0xd8 ) {
-    //  self.status.remove(CpuFlags::DECIMAL_MODE)) ,   
+    if ( opcode == 0xd8 ) {
+        // Clear DECIMAL MODE flag
+        new_state[5] = ((state_array[5] as u8) & 0xF7) as Field;
     } 
+    // /* CLI */
+    if ( opcode == 0x58 ) {
+        // Clear the INTERRUPT DISABLE flag
+        new_state[5] = ((state_array[5] as u8) & 0xFB) as Field;
+    }  
+    // /* CLV */
+    if ( opcode == 0xb8 ) {
+        // Clear the OVERFLOW flag
+        new_state[5] = ((state_array[5] as u8) & 0x5F) as Field;
+    } 
+    // /* CLC */
+    if ( opcode == 0x18 ) {
+        // Clear CARRY flag
+        new_state[5] = ((state_array[5] as u8) & 0xFE) as Field;
+    }
+    // /* SEC */
+    if ( opcode == 0x38 ) {
+        // Set the CARRY flag
+        new_state[5] = ((state_array[5] as u8) | 0x01) as Field;
+    }
+    // /* SEI */
+    if ( opcode == 0x78 ) {
+        // set the INTERRUPT DISABLE flag
+        new_state[5] = ((state_array[5] as u8) | 0x04) as Field;
+    }
+    // /* SED */
+    if ( opcode == 0xf8 ) {
+        // Set the DECIMAL MODE flag
+        new_state[5] = ((state_array[5] as u8) | 0x08) as Field;
+    }
+    // /* PHA */
+    if ( opcode == 0x48 ) {
+        assert(time_sorted_addr[t_index] == new_state[4]);
+        assert(time_sorted_rw[t_index] == 1);
+        assert(time_sorted_clk[t_index] == new_state[6]);
+        assert(time_sorted_value[t_index] == new_state[0]);
+        new_state[4] = wrapping_sub(new_state[4], 1); // stack push
+        tn_index = tn_index + 1;
+    }
 
-//         if ( /* CLI */ opcode - 0x58 ) {
-// // self.status.remove(CpuFlags::INTERRUPT_DISABLE))
-//         }  
+    // /* PLA */
+    if ( opcode == 0x68 ) {
+        new_state[4] = wrapping_add(new_state[4], 1); // stack pop
+        assert(time_sorted_addr[t_index] == new_state[4]);
+        assert(time_sorted_clk[t_index] == new_state[6]);
+        assert(time_sorted_rw[t_index] == 0);
+        new_state[0] = time_sorted_value[t_index];
+        tn_index = tn_index + 1;
+    }
 
-//         if ( /* CLV */ opcode - 0xb8 ) {
-// // self.status.remove(CpuFlags::OVERFLOW))
-//         } 
+    // /* PHP */
+    if ( opcode == 0x08 ) {
+         //http://wiki.nesdev.com/w/index.php/CPU_status_flag_behavior
+        let flags = (new_state[5] as u8) | 0x30;
+        assert(time_sorted_addr[t_index] == new_state[4]);
+        assert(time_sorted_clk[t_index] == new_state[6]);
+        assert(time_sorted_rw[t_index] == 1);
+        assert(time_sorted_value[t_index] == flags as Field);
+        new_state[4] = wrapping_sub(new_state[4], 1); // stack push
+        tn_index = tn_index + 1;
+    }
 
-//         if ( /* CLC */ opcode == 0x18) {
-//             // self.clear_carry_flag()) 
-//         }
-
-//         if ( /* SEC */ opcode == 0x38) {
-//             // self.set_carry_flag()) 
-//         }
-
-//         if ( /* SEI */ opcode == 0x78) {
-//             // self.status.insert(CpuFlags::INTERRUPT_DISABLE)) 
-//         }
-
-//         if ( /* SED */ opcode == 0xf8) {
-//             // self.status.insert(CpuFlags::DECIMAL_MODE)) 
-//         }
-
-//         if ( /* PHA */ opcode == 0x48) {
-//             // self.stack_push(self.register_a)) 
-//         }
-
-//         /* PLA */
-//         if ( opcode - 0x68 ) {
-//             // self.pla();
-//         }
-
-//         /* PHP */
-//         if ( opcode - 0x08 ) {
-//             // self.php();
-//         }
-
-//         /* PLP */
-//         if ( opcode == 0x28) {
-//             // self.plp();
-//         }
+    // /* PLP */
+    if ( opcode == 0x28) {
+        new_state[4] = wrapping_add(new_state[4], 1); // stack popp
+        assert(time_sorted_addr[t_index] == new_state[4]);
+        assert(time_sorted_rw[t_index] == 0);
+        assert(time_sorted_clk[t_index] == new_state[6]);
+        let flags = ((time_sorted_value[t_index] as u8) & 0xEF) | 0x20;
+        new_state[5] = flags as Field;
+        tn_index = tn_index + 1;
+    }
 
 //         /* ADC */
 //         if ( opcode == 0x69) | ( opcode == 0x65) | ( opcode == 0x75) | ( opcode == 0x6d) | ( opcode == 0x7d) | ( opcode == 0x79) | ( opcode == 0x61) | ( opcode == 0x71) {
@@ -201,31 +226,41 @@ fn perform_op(
 //             // self.compare(&opcode.mode, self.register_x)) ,
 //         } 
 
-//         /* JMP Absolute */
-//         if ( opcode == 0x4c) {
-//             // let mem_address = self.mem_read_u16(self.program_counter);
-//             // self.program_counter = mem_address;
-//         }
+        /* JMP Absolute */
+        if ( opcode == 0x4c) {
+            // let mem_address = self.mem_read_u16(self.program_counter);
+            let lo = time_sorted_value[t_index];
+            assert(time_sorted_addr[t_index] = new_state[3]);
+            assert(time_sorted_clk[t_index] == new_state[6]);
+            assert(time_sorted_rw[t_index] == 0);
 
-//         /* JMP Indirect */
-//         if ( opcode == 0x6c) {
-//             // let mem_address = self.mem_read_u16(self.program_counter);
-//             // // let indirect_ref = self.mem_read_u16(mem_address);
-//             // //6502 bug mode with with page boundary:
-//             // //  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
-//             // // the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
-//             // // i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
+            let hi = time_sorted_value[t_index + 1];
+            assert(time_sorted_addr[t_index + 1] = new_state[3] + 1);
+            assert(time_sorted_clk[t_index + 1] == new_state[6]);
+            assert(time_sorted_rw[t_index + 1] == 0);
 
-//             // let indirect_ref = if mem_address & opcode - 0x00FF == opcode - 0x00FF {
-//             //     let lo = self.mem_read(mem_address);
-//             //     let hi = self.mem_read(mem_address & opcode - 0xFF00);
-//             //     (hi as u16== << 8) | ( (lo as u16)
-//             // } else {
-//             //     self.mem_read_u16(mem_address)
-//             // };
+            new_state[3] = (hi as u8) << 8 | lo;
+        }
 
-//             // self.program_counter = indirect_ref;
-//         }
+        /* JMP Indirect */
+        // if ( opcode == 0x6c) {
+            // let mem_address = self.mem_read_u16(self.program_counter);
+            // // let indirect_ref = self.mem_read_u16(mem_address);
+            // //6502 bug mode with with page boundary:
+            // //  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
+            // // the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
+            // // i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
+
+            // let indirect_ref = if mem_address & opcode - 0x00FF == opcode - 0x00FF {
+            //     let lo = self.mem_read(mem_address);
+            //     let hi = self.mem_read(mem_address & opcode - 0xFF00);
+            //     (hi as u16== << 8) | ( (lo as u16)
+            // } else {
+            //     self.mem_read_u16(mem_address)
+            // };
+
+            // self.program_counter = indirect_ref;
+        // }
 
 //         /* JSR */
 //         if ( opcode - 0x20 ) {
@@ -367,6 +402,69 @@ fn perform_op(
     new_state[6] = new_state[6] + params.1;
     (new_state, tn_index) 
 }
+
+
+
+fn update_zero_and_negative_flags(
+    cpu_flags: Field,
+    result: u8,
+) -> Field {
+    let mut updated = cpu_flags as u8;
+    if result == 0 {
+        updated = updated | 0x80;
+        //remove
+    } else {
+        updated = updated & 0x7F;
+    }
+
+    //not sure if this is an effective check when convert from Field to u8 and back? I think no.
+    if (result & 0x80) as Field != 0 {
+        updated = updated | 0x80;
+        //remove
+    } else {
+        updated = updated & 0x7F;
+    }
+
+    updated as Field
+
+}
+
+fn update_carry_flag(
+    cpu_flags: Field,
+    insert: Field
+) -> Field {
+    let mut updated = cpu_flags as u8;
+    if insert == 1 {
+        updated = updated | 0x01;
+        //remove
+    } else {
+        updated = updated & 0xFE;
+    }
+    updated as Field
+}
+
+fn wrapping_sub(
+    a: Field,
+    b: Field
+) -> Field {
+    let mut result = a - b;
+    if result > 255 {
+        result = 255;
+    }
+    result
+}
+
+fn wrapping_add(
+    a: Field,
+    b: Field,
+) -> Field {
+    let mut result = a + b;
+    if result >= 256 {
+        result = 0;
+    }
+    result
+}
+
 
 fn get_address(
     mode: Field,

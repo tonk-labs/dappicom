@@ -101,6 +101,12 @@ fn main(
     for i in 0..10 {
         let opcode = opcodes[i];
         assert(opcode == time_sorted_value[t_index]);
+        assert(time_sorted_addr == new_state[3]);
+        assert(time_sorted_clk == new_state[6]);
+        assert(time_sortd_rw == 0);
+        t_index = t_index + 1;
+
+        new_state[3] = new_state[3] + 1; // update PC
 
         let (updated_state, next_index) = cpu::perform_op(
             opcode, 
