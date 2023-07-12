@@ -1,3 +1,7 @@
+/**
+ * Credit: https://github.com/bugzmanov/rustness_monster for code used to partially emulate MOS 6502
+ */
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;

@@ -8,6 +8,9 @@
 // 7 indirect x means we read zero page as base and then add register x and these components become the heuristic for the address
 // 8 indirect y means we read zero page, then use the heuristic to define pointer, then we add y to the dereferenced pointer 
 // 9 non addressing is used when there is no addressing mode
+
+
+//@TODO — we can separate these out into each opcode document, so will leave this here as a reference until that time.
 fn get_op_parameters(
     opcode: Field,
 ) -> (Field, Field, Field) {
