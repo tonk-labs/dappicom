@@ -226,12 +226,7 @@ impl CPU {
         //instruction from this specific memory location 0xFFFC
         self.program_counter = self.mem_read_u16(0xFFFC);
 
-        // self.trace.register_a.push(RegisterEntry(self.cycles, 0));
-        // self.trace.register_x.push(RegisterEntry(self.cycles, 0));
-        // self.trace.register_y.push(RegisterEntry(self.cycles, 0));
-        // self.trace.status.push(RegisterEntry(self.cycles, self.status.bits()));
-        // self.trace.stack_pointer.push(RegisterEntry(self.cycles, STACK_RESET));
-        // self.trace.program_counter.push(ProgramCounter(self.cycles, 0xFFFC));
+        // The trace should take into account the initialization of memory here
     }
 
     pub fn load_and_run(&mut self, program: Vec<u8>) {

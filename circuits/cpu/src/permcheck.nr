@@ -6,7 +6,7 @@ use dep::std;
 // the op sorted memory in our examples are used in checking each opcode
 
 // because permutation checks use an element-wise product, they may be helpful in ensuring consistency across multiple
-// proofs aggregated through recursion, but there is more work to discover exactly how this can be done in practice
+// proofs aggregated through recursion, but there is more work to discover exactly how this can be done in practice for this project
 
 // here we just illustrate how a permutation check would be computed for two various sets
 

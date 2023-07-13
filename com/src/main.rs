@@ -1,3 +1,7 @@
+/**
+ * This Rust MOS 6502 emulator is a modified version of Rafael Bagmanov's (@bugzmanov) NES / Dendy emulator
+ * which may be found at https://github.com/bugzmanov/rustness_monster
+ */
 pub mod cpu;
 pub mod opcodes;
 use cpu::Mem;
