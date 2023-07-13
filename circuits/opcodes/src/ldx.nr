@@ -70,7 +70,7 @@ fn check_op(
 
     //assert the cpu_time is the same and that mem_time is incremental
     for i in 1..7 {
-        assert((mem_time[i] - mem_time[i-1] + 1) == 0);
+        assert((mem_time[i] - mem_time[i-1] - 1) == 0);
         assert(mem_cpu_time[i] == mem_cpu_time[i-1]);
     }
 }
@@ -78,6 +78,14 @@ fn check_op(
 
 #[test]
 fn test_ldx() {
-
+    check_op(
+        [1048560, 1337, 1048560, 1048560, 1338, 1048561, 1048560, 1048575, 1048575, 1048575],
+        [1337,    162,   1338,    1338,    255,    255,     1340, 0, 0, 0],
+        [0, 1, 2, 3, 4, 5, 6, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [0,         0,     1,      0,       0,       1,       1, 0, 0, 0],
+        0,
+        1
+    )
 }
 

@@ -1,4 +1,4 @@
-
+use dep::std;
 // Illustrative example of validating an opcode instruction from MOS 6502
 // This opcode has no addressing mode
 
@@ -51,7 +51,7 @@ fn check_op(
     assert(mem_addr[4] == 1048561);
     assert(mem_value[4] == value);
 
-    if (value == 0) {
+    if (wrapped == 1) {
         assert(zero_flag == 1);
     } else {
         assert(zero_flag == 0);
@@ -65,11 +65,11 @@ fn check_op(
     //assert PC is incremented by length of opcode
     assert(mem_rw[5] == 1);
     assert(mem_addr[5] == 1048560);
-    assert(mem_value[5] == pc0 + 1 + LENGTH_OF_INX);
+        assert(mem_value[5] == (pc0 + 1 + LENGTH_OF_INX));
 
     //assert the cpu_time is the same and that mem_time is incremental
-    for i in 1..7 {
-        assert((mem_time[i] - mem_time[i-1] + 1) == 0);
+    for i in 1..6 {
+        assert((mem_time[i] - mem_time[i-1] - 1) == 0);
         assert(mem_cpu_time[i] == mem_cpu_time[i-1]);
     }
 
@@ -77,5 +77,13 @@ fn check_op(
 
 #[test]
 fn test_inx() {
-
+    check_op(
+        [1048560, 1337, 1048560, 1048561, 1048561, 1048560, 1048575, 1048575, 1048575, 1048575],
+        [1337, 232, 1338, 255, 0, 1339, 0, 0, 0, 0],
+        [0, 1, 2, 3, 4, 5, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+        1,
+        0
+    )
 }

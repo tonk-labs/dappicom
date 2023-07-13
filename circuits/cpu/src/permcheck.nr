@@ -45,19 +45,22 @@ fn permutation_check(
     }
 
     for i in 1..10 {
-        assert(addr_sorted_rw[i] as u64 <= 1); //all addresses are either read or write
-        assert(op_sorted_clk[i] as u64 >= op_sorted_clk[i-1] as u64); //the clock is monotonically increasing
+        if ((addr_sorted_addr[i] - 1048575 != 0)) { // the address 0xFFFFF is used as the 'padding' address
 
-        //addr are correctly sorted
-        if (addr_sorted_addr[i] != addr_sorted_addr[i-1]) {
-            assert(addr_sorted_addr[i] as u64 > addr_sorted_addr[i-1] as u64);
-        } else {
-            //same addresses are sorted by time
-            assert(addr_sorted_clk[i] as u64 >= addr_sorted_clk[i-1] as u64);
-            //memory is consistent
-            if (addr_sorted_rw[i] == 0) { //read operation
-                assert(addr_sorted_value[i] == addr_sorted_value[i-1]);
-            } 
+            assert(addr_sorted_rw[i] as u64 <= 1); //all addresses are either read or write
+            assert(op_sorted_clk[i] as u64 >= op_sorted_clk[i-1] as u64); //the clock is monotonically increasing
+
+            //addr are correctly sorted
+            if (addr_sorted_addr[i] != addr_sorted_addr[i-1]) {
+                assert(addr_sorted_addr[i] as u64 > addr_sorted_addr[i-1] as u64);
+            } else {
+                //same addresses are sorted by time
+                assert(addr_sorted_clk[i] as u64 >= addr_sorted_clk[i-1] as u64);
+                //memory is consistent
+                if (addr_sorted_rw[i] == 0) { //read operation
+                    assert(addr_sorted_value[i] == addr_sorted_value[i-1]);
+                } 
+            }
         }
     }
 
@@ -68,14 +71,16 @@ fn permutation_check(
 
 #[test]
 fn test_permutation_check() {
-        // permutation_check(
-        //     [0,0,0,0,0,0,0,0,0,1],
-        //     [0,0,0,0,0,0,1,2,3,3],
-        //     [0,0,0,0,0,0,0,1,2,8],
-        //     [0,0,0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,1,0,0,0],
-        //     [0,1,3,0,0,0,3,0,2,0],
-        //     [0,0,2,0,0,0,2,0,1,0],
-        //     [0,0,0,0,0,0,0,0,0,0],
-        // );
+        permutation_check(
+            [0,0,0,0,0,0,0,0,0,1],
+            [0,0,0,0,0,0,1,2,3,3],
+            [0,0,0,0,0,0,0,1,2,8],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,1,3,0,0,0,3,0,2,0],
+            [0,0,2,0,0,0,2,0,1,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+        );
 }
