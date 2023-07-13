@@ -38,36 +38,22 @@ bitflags! {
 const STACK: u16 = 0x0100;
 const STACK_RESET: u8 = 0xfd;
 
-// u64
-pub struct Instruction(u8, u8, u8, u8);
+//EXTRA MEMORY LOCATIONS PC, REGISTERS, ETC
+const ADDR_PC: u32 = 0xFFFF0;
+const ADDR_X_REG: u32 = 0xFFFF1;
 
-// u64 (u8 0s, u32 cycles, u16 (addr), u8 (value))
-pub struct MemoryEntry(u64, u16, u8);
-// u64 - u32 cycles, u8 value
-pub struct RegisterEntry(u64, u8);
+// address, value, memory_time, cpu_time, isWrite
+#[derive(Serialize)]
+pub struct MemoryEntry(u32, u16, u64, u64, bool);
 
-// u64  - u32 cycles, u16 value
-pub struct ProgramCounter(u64, u16);
-
+#[derive(Serialize)]
 pub struct Trace {
-    // 
-    pub reads: Vec<u64>,
-    pub writes: Vec<u64>,
-
-    pub register_a: Vec<u64>,
-    pub register_x: Vec<u64>,
-    pub register_y: Vec<u64>,
-
-    pub program_counter: Vec<u64>,
-    pub stack_pointer: Vec<u64>,
-    pub status: Vec<u64>,
-
-    pub ops: Vec<u64>,
+    pub memory: Vec<MemoryEntry>,
+    pub status: Vec<u8>,
 }
 
 pub trait Traceable {
     fn initialize_trace() -> Trace;
-    fn pad_zeroes(&mut self, size: usize);
     fn write_trace(&self) -> std::io::Result<()>;
 }
 
@@ -81,6 +67,7 @@ pub struct CPU {
     memory: [u8; 0xFFFF],
     trace: Trace,
     cycles: u64,
+    mem_cycles: u64,
 }
 
 #[derive(Debug)]
@@ -123,64 +110,29 @@ impl Mem for CPU {
     
     fn mem_read(&mut self, addr: u16) -> u8 { 
         let value = self.memory[addr as usize];
-        self.trace.reads.push(MemoryEntry(self.cycles, addr, value));
+        self.trace.memory.push(MemoryEntry(addr as u32, value as u16, self.mem_cycles, self.cycles, false));
+        self.mem_cycles += 1;
         value
     }
 
     fn mem_write(&mut self, addr: u16, data: u8) { 
         self.memory[addr as usize] = data;
-        self.trace.writes.push(MemoryEntry(self.cycles, addr, data));
+        self.trace.memory.push(MemoryEntry(addr as u32, data as u16, self.mem_cycles, self.cycles, true));
+        self.mem_cycles += 1;
     }
 }
 
 impl Traceable for CPU {
     fn initialize_trace() -> Trace {
         let trace = Trace {
-            reads: Vec::new(),
-            writes: Vec::new(),
-            register_a: Vec::new(),
-            register_x: Vec::new(),
-            register_y: Vec::new(),
-            program_counter: Vec::new(),
-            stack_pointer: Vec::new(),
+            memory: Vec::new(),
             status: Vec::new(),
-            ops: Vec::new()
         };
 
         trace
     }
 
-    fn pad_zeroes(&mut self, size: usize) {
-        //TODO: for memory, we shouldn't resize, we should just print the whole thing and chunk it into smaller inputs and pad any trailing using a separate function
-        //We're just going to cut the memory short for testing purposes (for now)
-        self.trace.reads.resize(size, MemoryEntry(0 as u64, 0 as u16, 0 as u8));
-        self.trace.writes.resize(size, MemoryEntry(0 as u64, 0 as u16, 0 as u8));
-
-        if self.trace.register_a.len() < size {
-            self.trace.register_a.resize(size, RegisterEntry(0 as u64, 0 as u8));
-        }
-        if self.trace.register_x.len() < size {
-            self.trace.register_x.resize(size, RegisterEntry(0 as u64, 0 as u8));
-        }
-        if self.trace.register_y.len() < size {
-            self.trace.register_y.resize(size, RegisterEntry(0 as u64, 0 as u8));
-        }
-        if self.trace.program_counter.len() < size {
-            self.trace.program_counter.resize(size, ProgramCounter(0 as u64, 0 as u16));
-        }
-        if self.trace.stack_pointer.len() < size {
-            self.trace.stack_pointer.resize(size, RegisterEntry(0 as u64, 0 as u8));
-        }
-        if self.trace.status.len() < size {
-            self.trace.status.resize(size, RegisterEntry(0 as u64, 0 as u8));
-        }
-        if self.trace.ops.len() < size {
-            self.trace.ops.resize(size, Instruction(0 as u8, 0 as u8, 0 as u8, 0 as u8));
-        }
-    }
-
     fn write_trace(&self) -> std::io::Result<()> {
-        let condensed_vec = self.trace 
         let toml = toml::to_string(&self.trace).unwrap();
         let file = File::create("trace.toml");
         file?.write_all(toml.as_bytes())
@@ -202,6 +154,7 @@ impl CPU {
             memory: [0; 0xFFFF], 
             trace: CPU::initialize_trace(),
             cycles: 0,
+            mem_cycles: 0,
         }
     }
 
@@ -273,12 +226,12 @@ impl CPU {
         //instruction from this specific memory location 0xFFFC
         self.program_counter = self.mem_read_u16(0xFFFC);
 
-        self.trace.register_a.push(RegisterEntry(self.cycles, 0));
-        self.trace.register_x.push(RegisterEntry(self.cycles, 0));
-        self.trace.register_y.push(RegisterEntry(self.cycles, 0));
-        self.trace.status.push(RegisterEntry(self.cycles, self.status.bits()));
-        self.trace.stack_pointer.push(RegisterEntry(self.cycles, STACK_RESET));
-        self.trace.program_counter.push(ProgramCounter(self.cycles, 0xFFFC));
+        // self.trace.register_a.push(RegisterEntry(self.cycles, 0));
+        // self.trace.register_x.push(RegisterEntry(self.cycles, 0));
+        // self.trace.register_y.push(RegisterEntry(self.cycles, 0));
+        // self.trace.status.push(RegisterEntry(self.cycles, self.status.bits()));
+        // self.trace.stack_pointer.push(RegisterEntry(self.cycles, STACK_RESET));
+        // self.trace.program_counter.push(ProgramCounter(self.cycles, 0xFFFC));
     }
 
     pub fn load_and_run(&mut self, program: Vec<u8>) {
@@ -315,6 +268,10 @@ impl CPU {
         let addr = self.get_operand_address(mode);
         let data = self.mem_read(addr);
         self.register_x = data;
+
+        self.trace.memory.push(MemoryEntry(ADDR_X_REG, data as u16, self.mem_cycles, self.cycles, false));
+        self.mem_cycles += 1;
+
         self.update_zero_and_negative_flags(self.register_x);
     }
 
@@ -355,11 +312,19 @@ impl CPU {
 
     fn tax(&mut self) {
         self.register_x = self.register_a;
+
+        self.trace.memory.push(MemoryEntry(ADDR_X_REG, self.register_a as u16, self.mem_cycles, self.cycles, false));
+        self.mem_cycles += 1;
+
         self.update_zero_and_negative_flags(self.register_x);
     }
 
     fn inx(&mut self) {
         self.register_x = self.register_x.wrapping_add(1);
+
+        self.trace.memory.push(MemoryEntry(ADDR_X_REG, self.register_x as u16, self.mem_cycles, self.cycles, false));
+        self.mem_cycles += 1;
+
         self.update_zero_and_negative_flags(self.register_x);
     }
 
@@ -375,6 +340,8 @@ impl CPU {
         } else {
             self.status.remove(CpuFlags::NEGATIV);
         }
+
+        self.trace.status.push(self.status.bits());
     }
 
     fn iny(&mut self) {
@@ -676,20 +643,18 @@ impl CPU {
 
         loop {
             let code = self.mem_read(self.program_counter);
+            self.trace.memory.push(MemoryEntry(ADDR_PC, code as u16, self.cycles, self.mem_cycles, false));
+            self.mem_cycles += 1;
+
             self.program_counter += 1;
+
+            self.trace.memory.push(MemoryEntry(ADDR_PC, self.program_counter, self.cycles, self.mem_cycles, true));
+            self.mem_cycles += 1;
+
             let program_counter_state = self.program_counter;
 
             let opcode = opcodes.get(&code).unwrap();
             self.cycles += opcode.cycles as u64;
-
-            //TODO: Where's a better place to do this?
-            if self.cycles > 100 as u64 {
-                self.pad_zeroes(100);
-                if self.write_trace().is_err() {
-                    println!("problem printing");
-                }
-                return
-            }
 
             match code {
                 0xa9 | 0xa5 | 0xb5 | 0xad | 0xbd | 0xb9 | 0xa1 | 0xb1 => {
