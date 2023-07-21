@@ -16,7 +16,9 @@ Hopefully, it means you can play NES roms on your local machine and then prove o
 
 ## How does it work?
 
-At the moment, we have some examples to illustrative what the emulation might look like in Noir.
+All gameplay happens as it would in a normal emulator. The emulation is performed locally and simulates the behavior of the MOS 6502 processor. What is different about this emulator is that it will record a transcript of its execution. This transcript of execution will then be sent to a proving service to determine if the machine executed correctly.
+
+At the moment, we have some examples to illustrative what that might look like in Noir.
 
 - [permcheck](circuits/cpu/src/permcheck.nr)
 - [opcodes](circuits/opcodes/src)
