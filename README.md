@@ -16,7 +16,7 @@ Hopefully, it means you can play NES roms on your local machine and then prove o
 
 ## How does it work?
 
-All gameplay happens as it would in a normal emulator. The emulation is performed locally and simulates the behavior of the MOS 6502 processor. What is different about this emulator is that it will record a transcript of its execution. This transcript of execution will then be sent to a proving service to determine if the machine executed correctly.
+All gameplay happens as it would in a normal emulator. The emulation is performed locally on your machine and simulates the behavior of the MOS 6502 processor. What is different about this emulator compared to the others is that it will record a transcript of its execution. This transcript of execution will then be sent to a proving service to determine if the machine executed correctly.
 
 At the moment, we have some examples to illustrative what that might look like in Noir.
 
@@ -44,3 +44,9 @@ My initial thought was to simply modify the transcript to include a separate "cr
 Understanding that we are already using merkle trees to fingerprint the memory across discrete transcripts, this bears similarity to Risc Zero's "continuations" and I am interested to adapt those techniques to perhaps simplify the construction here.
 
 As I've said, this is project is largely illustrative as the eventual architecture remains open.
+
+## Credits
+
+I want to thank bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. 
+
+This project is funded by an Aztec grant. Without them it wouldn't happen :)
