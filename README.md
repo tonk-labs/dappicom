@@ -43,7 +43,7 @@ My initial thought was to simply modify the transcript to include a separate "cr
 
 Understanding that we are already using merkle trees to fingerprint the memory across discrete transcripts, this bears similarity to Risc Zero's "continuations" and I am interested to adapt those techniques to perhaps simplify the construction here.
 
-As I've said, this is project is largely illustrative as the eventual architecture remains open.
+As I've said, this project is largely illustrative as the eventual architecture remains open.
 
 ## Credits
 
