@@ -45,12 +45,6 @@ Understanding that we are already using merkle trees to fingerprint the memory a
 
 As I've said, this project is largely illustrative as the eventual architecture remains open.
 
-## Credits
-
-I want to thank bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. 
-
-This project is funded by an Aztec grant. Without them it wouldn't happen :)
-
 ## How to run
 
 The NES emulator is written in Rust, at the moment it's only emulating the MOS 6502 instruction set. You can test a simple game of snake by running the following inside the [/com](/com) folder.
@@ -63,3 +57,9 @@ The Noir circuits have tests written for them which you can also run by [install
 ```
 nargo test
 ```
+
+## Credits
+
+I want to thank bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. 
+
+This project is funded by an Aztec grant. Without them it wouldn't happen :)
