@@ -50,3 +50,16 @@ As I've said, this project is largely illustrative as the eventual architecture 
 I want to thank bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. 
 
 This project is funded by an Aztec grant. Without them it wouldn't happen :)
+
+## How to run
+
+The NES emulator is written in Rust, at the moment it's only emulating the MOS 6502 instruction set. You can test a simple game of snake by running the following inside the [/com](/com) folder.
+```
+cargo build
+cargo run
+```
+
+The Noir circuits have tests written for them which you can also run by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the [/circuits/cpu](/circuits/cpu/) or [/circuits/opcodes](/circuits/opcodes/) folder running
+```
+nargo test
+```
