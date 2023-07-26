@@ -7,6 +7,8 @@ This project is in its early stages. The architecture is likely to change somewh
 ## What does that mean?
 Hopefully, it means you can play NES ROMs on your local machine and then prove outcomes of that gameplay onchain to trigger downstream rewards/consequences. That's the end goal.
 
+Furthermore, your gameplay will be proven in zero-knowledge. In essence, you can prove that you achieved a particular in-game milestone, without revealing exactly how you did so.
+
 ##  Why are you doing this?
 1. Because it's fun!
 2. This is a great way to make discoveries about performant zkvm design, especially in the context of onchain games.
