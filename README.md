@@ -11,7 +11,7 @@ Furthermore, your gameplay will be proven in zero-knowledge. In essence, you can
 
 ##  Why are you doing this?
 1. Because it's fun!
-2. This is a great way to make discoveries about performant zkvm design, especially in the context of onchain games.
+2. This is a great way to make discoveries about performant zkvm design, especially in the context of onchain games. Good zkvm design is important both for twitchy gamefeel for fully onchain games, and also to facilitate hidden information. Neither of these are trivially possible within a vanilla blockchain execution environment.
 3. The MOS 6502 processor is beautiful and historically significant. While this project aims to emulate the NES, one can adapt it to play games from other computer systems which used the MOS 6502 (Commodore 64, Apple II etcetera). 
 4. There is a homebrew community which still writes programs for these systems. We are interested to see what happens when you blend retro gaming with onchain "metagame" affordances. 
 
