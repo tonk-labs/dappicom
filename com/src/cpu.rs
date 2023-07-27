@@ -65,7 +65,6 @@ pub struct CPU {
     pub status: CpuFlags,
     pub program_counter: u16,
     pub stack_pointer: u8,
-    memory: [u8; 0xFFFF],
     pub bus: Bus,
     trace: Trace,
     cycles: u64,
@@ -146,7 +145,7 @@ impl Traceable for CPU {
 
 
 impl CPU {
-    pub fn new() -> Self {
+    pub fn new(bus: Bus) -> Self {
         CPU {
             register_a: 0,
             register_x: 0,
@@ -154,10 +153,9 @@ impl CPU {
             program_counter: 0,
             status: CpuFlags::from_bits_truncate(0b100100),
             stack_pointer: STACK_RESET,
-            bus: Bus::new(),
+            bus,
             //TODO: in true NES emulation, the memory is initialized to randomized values
             //some games use this initial randomization to seed rngs
-            memory: [0; 0xFFFF], 
             trace: CPU::initialize_trace(),
             cycles: 0,
             mem_cycles: 0,
@@ -241,21 +239,17 @@ impl CPU {
         self.run();
     }
 
-    pub fn load_with_trace(&mut self, program: Vec<u8>) {
-        // we need to initialize the memory in the read/write trace
-        //so rather than doing this quickly, we're gonna have to do it the slow way.
-        for i in 0x0600 .. (0x0600 + program.len()) {
-            self.mem_write(i as u16, program[i - 0x0600]);
-        }
-        //FIXME: This seems like bit of a hack, no? We'll need to change this later.
-        //Later on, we need to just assume the ROM itself will include a value at this address
-        //We can add a special fn for test purposes
-        self.mem_write_u16(0xFFFC, 0x0600);
-
-    }
-
     pub fn load(&mut self, program: Vec<u8>) {
-        self.memory[0x0600 .. (0x0600 + program.len())].copy_from_slice(&program[..]);
+        self.bus.flash_rom(program);
+
+        // This logic here commented out for now
+        // 
+        // At the moment, we don't allow you to "write" to ROM space.
+        // this breaks all the CPU tests
+        // for i in 0..(program.len() as u16) {
+        //     self.mem_write(0x8600 + i, program[i as usize]);
+        // }
+        // self.mem_write_u16(0xFFFC, 0x8600);
     }
 
     fn ldy(&mut self, mode: &AddressingMode) {
@@ -945,14 +939,18 @@ impl CPU {
     }
 }
 
-
+/**
+ * TODO: these tests are whack and need to be rewritten
+ */
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::cartridge::test;
 
     #[test]
     fn test_0xa9_lda_immediate_load_data() {
-        let mut cpu = CPU::new();
+        let bus = Bus::new(test::test_rom());
+        let mut cpu = CPU::new(bus);
         cpu.load_and_run(vec![0xa9, 0x05, 0x00]);
         assert_eq!(cpu.register_a, 5);
         assert!(cpu.status.bits() & 0b0000_0010 == 0b00);
@@ -961,18 +959,18 @@ mod test {
 
     #[test]
     fn test_0xaa_tax_move_a_to_x() {
-        let mut cpu = CPU::new();
-        cpu.load(vec![0xaa, 0x00]);
-        cpu.reset();
+        let bus = Bus::new(test::test_rom());
+        let mut cpu = CPU::new(bus);
         cpu.register_a = 10;
-        cpu.run();
+        cpu.load_and_run(vec![0xaa, 0x00]);
 
         assert_eq!(cpu.register_x, 10)
     }
 
     #[test]
     fn test_5_ops_working_together() {
-        let mut cpu = CPU::new();
+        let bus = Bus::new(test::test_rom());
+        let mut cpu = CPU::new(bus);
         cpu.load_and_run(vec![0xa9, 0xc0, 0xaa, 0xe8, 0x00]);
 
         assert_eq!(cpu.register_x, 0xc1)
@@ -980,18 +978,18 @@ mod test {
 
     #[test]
     fn test_inx_overflow() {
-        let mut cpu = CPU::new();
-        cpu.load(vec![0xe8, 0xe8, 0x00]);
-        cpu.reset();
+        let bus = Bus::new(test::test_rom());
+        let mut cpu = CPU::new(bus);
         cpu.register_x = 0xff;
-        cpu.run();
+        cpu.load_and_run(vec![0xe8, 0xe8, 0x00]);
 
         assert_eq!(cpu.register_x, 1)
     }
 
     #[test]
     fn test_lda_from_memory() {
-        let mut cpu = CPU::new();
+        let bus = Bus::new(test::test_rom());
+        let mut cpu = CPU::new(bus);
         cpu.mem_write(0x10, 0x55);
 
         cpu.load_and_run(vec![0xa5, 0x10, 0x00]);
