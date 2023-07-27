@@ -8,6 +8,7 @@ use std::io::prelude::*;
 
 use serde::Serialize;
 use crate::opcodes;
+use crate::bus::Bus;
 
 bitflags! {
     /// # Status Register (P) http://wiki.nesdev.com/w/index.php/Status_flags
@@ -65,6 +66,7 @@ pub struct CPU {
     pub program_counter: u16,
     pub stack_pointer: u8,
     memory: [u8; 0xFFFF],
+    pub bus: Bus,
     trace: Trace,
     cycles: u64,
     mem_cycles: u64,
@@ -97,7 +99,6 @@ pub trait Mem {
         let hi = self.mem_read(pos + 1) as u16;
         (hi << 8) | (lo as u16)
     }
-
     fn mem_write_u16(&mut self, pos: u16, data: u16) {
         let hi = (data >> 8) as u8;
         let lo = (data & 0xff) as u8;
@@ -107,18 +108,22 @@ pub trait Mem {
 }
 
 impl Mem for CPU {
-    
     fn mem_read(&mut self, addr: u16) -> u8 { 
-        let value = self.memory[addr as usize];
+        let value = self.bus.mem_read(addr);
         self.trace.memory.push(MemoryEntry(addr as u32, value as u16, self.mem_cycles, self.cycles, false));
         self.mem_cycles += 1;
         value
     }
-
     fn mem_write(&mut self, addr: u16, data: u8) { 
-        self.memory[addr as usize] = data;
+        self.bus.mem_write(addr, data);
         self.trace.memory.push(MemoryEntry(addr as u32, data as u16, self.mem_cycles, self.cycles, true));
         self.mem_cycles += 1;
+    }
+    fn mem_read_u16(&mut self, pos: u16) -> u16 {
+        self.bus.mem_read_u16(pos)
+    }
+    fn mem_write_u16(&mut self, pos: u16, data: u16) {
+        self.bus.mem_write_u16(pos, data)
     }
 }
 
@@ -149,6 +154,7 @@ impl CPU {
             program_counter: 0,
             status: CpuFlags::from_bits_truncate(0b100100),
             stack_pointer: STACK_RESET,
+            bus: Bus::new(),
             //TODO: in true NES emulation, the memory is initialized to randomized values
             //some games use this initial randomization to seed rngs
             memory: [0; 0xFFFF], 
