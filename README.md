@@ -49,11 +49,20 @@ As I've said, this project is largely illustrative as the eventual architecture 
 
 ## How to run
 
-The NES emulator is written in Rust. At the moment it's only emulating the MOS 6502 instruction set. You can test a simple game of snake by running the following inside the [/com](/com) folder.
+The NES emulator will require modifications to output the transcript and snapshot its state in a format most suitable for proving. In the interest of developer velocity, we have gone ahead and forked the tetanes project. For now, it's a submodule. 
+
+Performance is nearly 60fps when using the release build. When running the binary, you can load a test_rom or play the freeware roms in play_rom
 ```
+cd tetanes
+
+# make sure you have these installed
+brew install sdl2 sdl2_gfx sdl2_image sdl2_mixer sdl2_ttf
+
 cargo build
 cargo run
 ```
+
+
 
 The Noir circuits have tests written for them, that you can run by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the [/circuits/cpu](/circuits/cpu/) or [/circuits/opcodes](/circuits/opcodes/) folder running
 ```
@@ -62,6 +71,12 @@ nargo test
 
 ## Credits
 
-I want to thank bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. 
+Thanks to [lukexor](https://lukeworks.tech/) for open-sourcing their tetanes project, which is a feature rich NES emulator written in Rust.
+
+Thanks to [nesdev.org](https://nesdev.org) — an incredible resource, practically the single resource for all things NES.
+
+Thanks to bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/nes_ebook/index.html) on NES emulation in Rust and provided example code. This is a great beginners guide into writing a NES emulator in Rust.
+
+Thanks to [Frank Laub](https://github.com/flaub) at Risc0 for discussions on zkvm design and feedback on proving MOS 6502 execution.
 
 This project is funded by an Aztec grant. Without them it wouldn't happen :)
