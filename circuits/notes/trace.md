@@ -29,5 +29,42 @@ The state machine operates only on memory, but uses the opcode execution trace t
 
 ## Possible trace format
 
-Memory trace
-0x0000
+Memory Trace: (addr, cycle, val, r/w)
+
+If there is a read or write to a mirror, we just change it to read/write from the source. This means memory space 0x0800 - 0x1FFF is effectively unused by the CPU.
+
+0x0100-0x01FF is where the 256-bytes of stack exist
+
+We do the same with NES PPU registers, it's simply the registers 0x2000-0x2007 and we fill these with dummy writes. Any reads/writes to the mirrors are rewritten in the trace. This makes 0x2008 - 0x3FFF unused.
+
+We do the same with NES APU registers, 0x4000 - 0x4015 filled with dummy writes
+
+The joypad registers 0x4016 and 0x4017 filled with dummy writes
+
+0x4018 - 0x401F is unused
+
+0x4020 - 0xFFFF PRG ROM
+
+We expand out memory that is memory mapped by translating all the banks into a large memory space.
+
+The CPU registers A, X, Y, Program Counter, Stack Pointer, and Status Register can occupy memory space in the unused portion 0x4018 - 0x401F
+
+A = 0x4018
+X = 0x4019
+Y = 0x401A
+PC = 0x401B
+SP = 0x401C
+SR = 0x401D
+
+The program will output the memory trace during execution by cycle
+
+The execution trace can simply be opcode (enum), addressing mode (enum), start, end range in the output memory trace
+
+
+## Final Format
+
+We should be able to use this information to create an address-cycle sorted list of tuples and an opcode cycle sorted and segmented list of tuples. These inputs are formatted from partitions of the original trace. A merkle tree hash of memory "pages" is computed for the beginning and end of each segment. We will also need to keep track of some "dirty" bits to know which pages have been written over and need to be recomputed.
+
+
+
+
