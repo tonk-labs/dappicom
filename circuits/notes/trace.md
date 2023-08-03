@@ -29,7 +29,9 @@ The state machine operates only on memory, but uses the opcode execution trace t
 
 ## Possible trace format
 
-Memory Trace: (addr, cycle, val, r/w)
+Memory Trace: (step, addr, val, op_rw)
+
+Step should be incremented every time there is a read or write operation
 
 If there is a read or write to a mirror, we just change it to read/write from the source. This means memory space 0x0800 - 0x1FFF is effectively unused by the CPU.
 
