@@ -25,6 +25,8 @@ fn run(
     hashpath_a: [Field; 12], //we hash all the reads 
     hashpath_b: [Field; 12], //for the writes
 ) -> Field {
+    //TODO: account for padding in the addr_sorted and op_sorted values
+
     //hash the mem_page
     let leaf: [Field; 2] = std::hash::pedersen(mem_page);
     //prove merkle inclusion

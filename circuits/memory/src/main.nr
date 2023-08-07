@@ -37,6 +37,9 @@ fn main(
     hashpath_a: [Field; 12], //we hash all the reads 
     hashpath_b: [Field; 12], //for the writes
     ) -> (Field, Field, Field, Field) {
+        // These two only for testing purposes
+        // For procedures see notes/recursion.md
+
         // PROCEDURE 1.a
         // let challenges_and_partial_permutations = memcheck::run(
         //     addr_sorted_step,
@@ -60,7 +63,7 @@ fn main(
         //     r, mem_root_a, mem_root_b, page_index, hashpath_a, hashpath_b);
 
 
-        //PROCEDURE 4 (aggregation step as comments)
+        //PROCEDURE 4 (aggregation step as comments) main memory can be use for aggregation?
         // verify continuations and memcheck
         // aggregated permutation 1_b = product([partial_permutation])
         // aggregated permutation 1_a_addr = product([challenges_and_partial_permutations[2]])

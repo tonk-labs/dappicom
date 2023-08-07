@@ -14,6 +14,8 @@ fn run(
     // returns the two intermediary permutation checks, and two intermediary challenge hashes
 ) -> [Field; 4] {
 
+    //TODO: account for padding in the addr_sorted and op_sorted values
+
     // compute the intermediary challenge (we aggregate this at the end to double check the 'r' value)
     let mut challenge_a = 0;
     let mut challenge_op = 0;
