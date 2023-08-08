@@ -23,6 +23,8 @@ We want to sort the state of machine + RAM by opcodes, so the easiest way to do 
 
 To start, we stop the program execution every second, print out the trace, and then wait for a key command before continuing. 
 
+In the future, we could simply serialize and push to a separate thread inbetween renders as the NES runs much slower than modern CPUs.
+
 Address modes maybe can use a pure opcode execution trace as advice arguments?
 The state machine operates only on memory, but uses the opcode execution trace to simplify the constraints?
 
@@ -33,11 +35,11 @@ Memory Trace: (step, addr, val, op_rw)
 
 Step should be incremented every time there is a read or write operation
 
-If there is a read or write to a mirror, we just change it to read/write from the source. This means memory space 0x0800 - 0x1FFF is effectively unused by the CPU.
+If there is a read or write to a mirror, we just change it to read/write from the source. This means memory space 0x0800 - 0x1FFF is effectively unused by the CPU. Why do we want unused memory space? It saves us on hashing page retrievals in the prover. If we can cluster the memory accesses, then we'll have less pages to retrieve and hash for the continuations.
 
 0x0100-0x01FF is where the 256-bytes of stack exist
 
-We do the same with NES PPU registers, it's simply the registers 0x2000-0x2007 and we fill these with dummy writes. Any reads/writes to the mirrors are rewritten in the trace. This makes 0x2008 - 0x3FFF unused.
+We do the same with NES PPU registers, it's simply the registers 0x2000-0x2007 and we fill these with dummy writes. Any reads/writes to the mirrors are rewritten in the trace. This makes 0x2008 - 0x3FFF unused — howver, we will now use 0x2008 - 0x200D for the registers. Those will be written to the trace using symbols which are then converted by a reformatting script (which feeds the trace into the prover).
 
 We do the same with NES APU registers, 0x4000 - 0x4015 filled with dummy writes
 
@@ -51,12 +53,14 @@ We expand out memory that is memory mapped by translating all the banks into a l
 
 The CPU registers A, X, Y, Program Counter, Stack Pointer, and Status Register can occupy memory space in the unused portion 0x4018 - 0x401F
 
-A = 0x4018
-X = 0x4019
-Y = 0x401A
-PC = 0x401B
-SP = 0x401C
-SR = 0x401D
+// these will be used often and should exist in commonly accessed "page"
+//if we put it near the PPU registers, it should fit within one page for all the reads/writes to PPU during vblank/hblank
+A = 0x2008
+X = 0x2009
+Y = 0x200A
+PC = 0x200B
+SP = 0x200C
+SR = 0x200D
 
 The program will output the memory trace during execution by cycle
 
