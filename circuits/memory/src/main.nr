@@ -35,32 +35,32 @@ fn main(
     // but the levels above are simple binary merkle tree
     // so we get at the end a hash path of 8
     hashpath_a: [Field; 12], //we hash all the reads 
-    hashpath_b: [Field; 12], //for the writes
-    ) -> (Field, Field, Field, Field) {
+    hashpath_b: [Field; 12] //for the writes
+    ) -> pub [Field; 4] {
         // These two only for testing purposes
         // For procedures see notes/recursion.md
 
         // PROCEDURE 1.a
-        // let challenges_and_partial_permutations = memcheck::run(
-        //     addr_sorted_step,
-        //     addr_sorted_addr,
-        //     addr_sorted_val,
-        //     addr_sorted_op_rw,
-        //     op_sorted_step,
-        //     op_sorted_addr,
-        //     op_sorted_val,
-        //     op_sorted_op_rw,
-        //     r
-        // );
+        let challenges_and_partial_permutations = memcheck::run(
+            addr_sorted_step,
+            addr_sorted_addr,
+            addr_sorted_val,
+            addr_sorted_op_rw,
+            op_sorted_step,
+            op_sorted_addr,
+            op_sorted_val,
+            op_sorted_op_rw,
+            r
+        );
 
         // PROCEDURE 1.b
-        // let partial_permutation = continuation::run(
-        //     mem_page, 
-        //     addr_sorted_step,
-        //     addr_sorted_addr,
-        //     addr_sorted_val,
-        //     addr_sorted_op_rw,
-        //     r, mem_root_a, mem_root_b, page_index, hashpath_a, hashpath_b);
+        let partial_permutation = continuation::run(
+            mem_page, 
+            addr_sorted_step,
+            addr_sorted_addr,
+            addr_sorted_val,
+            addr_sorted_op_rw,
+            r, mem_root_a, mem_root_b, page_index, hashpath_a, hashpath_b);
 
 
         //PROCEDURE 4 (aggregation step as comments) main memory can be use for aggregation?
@@ -71,7 +71,7 @@ fn main(
         // aggregated challenge r = hash([challenges_and_partial_permutations[0], challenges_and_partial_permutations[1]])
 
         // (aggergated_permutation_1_b, aggregated_permutation_1_a_addr, aggregated_permutation_1_a_ops, aggregated_challenge_r)
-        (0,0,0,0) //placeholder for now
+        [0,0,0,0] //placeholder for now
 }
 
 #[test]

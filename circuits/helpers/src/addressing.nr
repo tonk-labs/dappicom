@@ -36,21 +36,21 @@ fn run(
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
 // Returns (Address, Value — for ABY,ABX, and IDY)
-) -> (Field, Field) {
+) -> [Field; 2] {
     if mode == 0 {
-        (0,0)
+        [0,0]
 
     } else if mode == 1 { // ACC
         // also kind of a do nothing mode
         // PC is read, 
         // value at PC is read and thrown away
-        (0,0)
+        [0,0]
 
     } else if mode == 2 { // IMP
         //kind of a do nothing mode
         // PC is read, 
         // value at PC is read and thrown away
-        (0,0)
+        [0,0]
 
     } else if mode == 3 { //  IMM
         // read pc and set as address
@@ -94,7 +94,7 @@ fn run(
         // read value into hi
         // set PC to PC + 1
         // return hi << 8 | lo
-§
+        
     } else if mode == 9 { // ABX
         // read PC
         // read value into lo 

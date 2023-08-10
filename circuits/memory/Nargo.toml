@@ -1,6 +1,7 @@
 [package]
 name = "memory"
-authors = [""]
+authors = ["Goblin Oats"]
+type = "bin"
 compiler_version = "0.9.0"
 
 [dependencies]

@@ -1,4 +1,3 @@
-
 // Illustrative example of validating an opcode instruction from MOS 6502
 // ( we only care about immediate addressing at the moment )
 

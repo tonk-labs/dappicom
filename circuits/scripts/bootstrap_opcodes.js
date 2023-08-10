@@ -1,4 +1,28 @@
-use dep::helpers;
+const fs = require('fs');
+
+function parseFile(inputPath) {
+    // Read the file.
+    const data = fs.readFileSync(inputPath, 'utf8');
+    
+    // Regular expression to match the lines like: pub(super) fn function_name(&mut self)
+    const regex = /pub\(super\) fn ([^\(]+)\(&mut self\)/g;
+
+    let match;
+    const functionNames = [];
+
+    const dont_match = [
+        'acc','imp','imm','zp0','zpx','zpy','rel','abs','abx','aby','ind','idx','idy'
+    ]
+
+    while ((match = regex.exec(data)) !== null) {
+        if (!dont_match.includes(match[1])) {
+            functionNames.push(match[1]);
+        }
+    }
+
+    // Write files for each function name.
+    for (const name of functionNames) {
+        const content = `use dep::helpers;
 
 fn check_op(
     r: Field,
@@ -43,4 +67,12 @@ fn check_op(
         op_sorted_val,
         op_sorted_op_rw
     )
+}`;
+
+        fs.writeFileSync(`${name}.nr`, content);
+    }
 }
+
+// Taking input from the user for file path.
+const filePath = process.argv[2];
+parseFile(filePath);
