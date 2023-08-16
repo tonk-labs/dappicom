@@ -1,0 +1,35 @@
+[package]
+name = "tetanes-web"
+version = "0.2.0"
+license = "GPL-3.0-or-later"
+description = "A NES Emulator written in Rust and WebAssembly"
+authors = ["Luke Petherbridge <me@lukeworks.tech>"]
+readme = "README.md"
+documentation = "https://github.com/lukexor/tetanes/tree/main/tetanes-web"
+repository = "https://github.com/lukexor/tetanes.git"
+homepage = "https://lukeworks.tech/tetanes"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+console_log = "0.2.0"
+log = "0.4.17"
+tetanes = { path = "../", default_features = false }
+wasm-bindgen = "0.2.80"
+console_error_panic_hook = "0.1.7"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.30"
+
+[patch.crates-io]
+pix-engine = { git = "https://github.com/lukexor/pix-engine.git" }
+
+[profile.dev-opt]
+inherits = "dev"
+opt-level = 2
+
+[profile.release]
+codegen-units = 1
+lto = true
