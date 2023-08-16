@@ -1,24 +1,28 @@
 # Dappicom — NES Emulation in Noir
 
-Dappicom is a provable Nintendo Entertainment System emulator written in Noir and Rust. Practically, this is a zkvm which supports the MOS 6502 instruction set. The zkvm is built in Noir (we heard you liked zkvms, so we put a zkvm in your zkvm).
+Dappicom is a provable Nintendo Entertainment System emulator written in Noir and Rust. Practically, this is a zkvm which supports the MOS 6502 instruction set and a few NES specific quirks. The zkvm is built in Noir (we heard you liked zkvms, so we put a zkvm in your zkvm).
 
-This project is in its early stages. The architecture is likely to change somewhat and is presently meant to be illustrative of what the eventual architecture may look like moving forward.
+The project is in its early stages. There is a loose skeleton structure laid out which should make collaboration much easier moving forward, however like any kind of "architecting" there will be oversights and gaps. As the project matures those gaps will be filled in and oversights corrected.
 
 ## What does that mean?
 Hopefully, it means you can play NES ROMs on your local machine and then prove outcomes of that gameplay onchain to trigger downstream rewards/consequences. That's the end goal.
 
-Furthermore, your gameplay will be proven in zero-knowledge. In essence, you can prove that you achieved a particular in-game milestone, without revealing exactly how you did so.
+Using zero knowledge to prove off-chain compute *effectively* brings the result of that compute onto the blockchain when it is verified. Think of what you might want to do with NES gameplay when it's composable, permissionless and trustless. We call it the "retro gaming universe".
 
 ##  Why are you doing this?
 1. Because it's fun!
 2. This is a great way to make discoveries about performant zkvm design, especially in the context of onchain games. Good zkvm design is important both for twitchy gamefeel for fully onchain games, and also to facilitate hidden information. Neither of these are trivially possible within a vanilla blockchain execution environment.
 3. The MOS 6502 processor is beautiful and historically significant. While this project aims to emulate the NES, one can adapt it to play games from other computer systems which used the MOS 6502 (Commodore 64, Apple II etcetera). 
-4. There is a homebrew community which still writes programs for these systems. We are interested to see what happens when you blend retro gaming with onchain "metagame" affordances. 
+4. There is a homebrew community which still writes programs for these systems. We are interested to see what happens when you blend retro gaming with onchain "metagame" affordances and extensions. 
 
 
 ## How does it work?
 
-[See technical docs]()
+[See roadmap and product flow technical explainer](TECHNICAL.md)
+
+## I want to contribute
+
+That's great! We are actively seeking contributions and are grateful for your support. Please see the [contribution guidelines](CONTRIBUTING.md) to get started. 
 
 ## How to run
 
@@ -35,7 +39,7 @@ cargo build
 cargo run
 ```
 
-Noir circuits should have tests being written for them. For thos that do have tests you can run them by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
+Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
 ```
@@ -50,4 +54,4 @@ Thanks to bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/n
 
 Thanks to [Frank Laub](https://github.com/flaub) at Risc0 for discussions on zkvm design and feedback on proving MOS 6502 execution.
 
-This project is funded by an Aztec grant. Without them it wouldn't happen :)
+This project is funded by an [Aztec grant](https://aztec.network/grants/). Without them it wouldn't happen :)
