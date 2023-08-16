@@ -1,4 +1,5 @@
-# Dappicom — NES Emulation in Noir
+![Dappicom Banner of a product box floating, it says "Provable NES emulator"](1_DappicomBox.gif)
+# [Dappicom](tonk-gg.github.io/dappicom-site) — NES Emulation in Noir
 
 Dappicom is a provable Nintendo Entertainment System emulator written in Noir and Rust. Practically, this is a zkvm which supports the MOS 6502 instruction set and a few NES specific quirks. The zkvm is built in Noir (we heard you liked zkvms, so we put a zkvm in your zkvm).
 
@@ -55,3 +56,5 @@ Thanks to bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/n
 Thanks to [Frank Laub](https://github.com/flaub) at Risc0 for discussions on zkvm design and feedback on proving MOS 6502 execution.
 
 This project is funded by an [Aztec grant](https://aztec.network/grants/). Without them it wouldn't happen :)
+
+Illustration made by [Hi-Bred](https://hi-bred.net) and may only be used in this project.
