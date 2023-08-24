@@ -30,7 +30,7 @@ DAPPICOM is an open-source project made possible by contributors like you <3 let
 
 ## I Have a Question
 
-If you want to ask a question, you can drop into the [Tonk discord](https://discord.gg/rKZMdZKv). Please do take a look at the [Roadmap and Prodcut Flow Technical Document](TECHNICAL.md). 
+If you want to ask a question, you can drop into the [Tonk discord](https://discord.gg/rKZMdZKv). Please do take a look at the [Roadmap and Product Flow Technical Document](TECHNICAL.md). 
 
 Before you ask a question, it is best to search for existing [Issues](/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. It is also advisable to search the internet for answers first.
 
