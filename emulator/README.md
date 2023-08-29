@@ -461,7 +461,7 @@ contact me directly at <https://lukeworks.tech/contact/>.
 
 _August 29, 2023_
 
-This source code has been sufficiently modified from the original. Present changes may affect the performance of the emulator and are necessary for integrations into the Dappicom project. If you would like to submit bug reports or somehow have been negatively affected by the execution of the Dappicom source, please reach out to the maintainers of the Dappicom project or submit a bug report in this repositories issues. The original maintainer of the tetanes project has not been involved in this fork of the source code and cannot be held liable for its changes. 
+This source code has been sufficiently modified from the original. Present changes may affect the performance of the emulator and are necessary for integrations into the Dappicom project. If you would like to submit bug reports or somehow have been negatively affected by the execution of the Dappicom source, please reach out to the maintainers of the Dappicom project or submit a bug report in this repository's issues. The original maintainer of the tetanes project has not been involved in this fork of the source code and cannot be held liable for its changes. 
 
 ## Credits
 
