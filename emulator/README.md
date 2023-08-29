@@ -19,6 +19,8 @@
 Started](#getting-started) - 🛠️ [Features](#features) - ⚠️ [Known
 Issues](#known-issues) - 💬 [Contact](#contact)
 
+[LEGAL NOTICE OF MODIFICATION](#changes)
+
 ## Summary
 
 <img width="100%"
@@ -454,6 +456,12 @@ suggestions. Feel free to submit a pull request if you want to help out!
 
 For issue reporting, please use the [github issue tracker][]. You can also
 contact me directly at <https://lukeworks.tech/contact/>.
+
+## Changes
+
+_August 29, 2023_
+
+This source code has been sufficiently modified from the original. Present changes may affect the performance of the emulator and are necessary for integrations into the Dappicom project. If you would like to submit bug reports or somehow have been negatively affected by the execution of the Dappicom source, please reach out to the maintainers of the Dappicom project or submit a bug report in this repositories issues. The original maintainer of the tetanes project has not been involved in this fork of the source code and cannot be held liable for its changes. 
 
 ## Credits
 
