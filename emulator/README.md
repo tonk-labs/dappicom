@@ -49,9 +49,6 @@ since the address and data buses are mutable global state which is normally
 restricted in Rust, but is safe here given the synchronized nature of the
 emulation.
 
-`TetaNES` also compiles for the web! Try it out in your
-[browser](http://dev.lukeworks.tech/tetanes)!
-
 ## Minimum Supported Rust Version (MSRV)
 
 The current minimum Rust version is `1.62.0`.
@@ -318,120 +315,9 @@ When using the WASM version in the browser, also include:
   range of games requiring precise timing. Disabling may improve performance on
   lower-end machines. Enabled by default.
 
-### Roadmap
-
-- NES Formats & Run Modes
-  - [x] NTSC
-  - [x] PAL
-  - [x] Dendy
-  - [ ] Headless mode
-- Central Processing Unit (CPU)
-  - [x] Official Instructions
-  - [x] Unofficial Instructions
-  - [x] Cycle Accurate
-- Picture Processing Unit (PPU)
-  - [x] Pixellate Filter
-  - [x] NTSC Filter
-  - [ ] CRT Filter
-- Audio Processing Unit (APU)
-  - [x] Pulse Channels
-  - [x] Triangle Channel
-  - [x] Noise Channel
-  - [x] Delta Modulation Channel (DMC)
-- Player Input
-  - [x] 1-2 Player w/ Keyboard or Controllers
-  - [ ] 3-4 Player Support w/ Controllers
-  - [x] Zapper (Light Gun)
-- Cartridge
-  - [x] iNES Format
-  - [x] NES 2.0 Format
-  - [ ] Complete NES 2.0 support
-  - Mappers
-    - [x] Mapper 000 - NROM
-    - [x] Mapper 001 - SxROM/MMC1B/C
-    - [x] Mapper 002 - UxROM
-    - [x] Mapper 003 - CNROM
-    - [x] Mapper 004 - TxROM/MMC3/MMC6
-    - [x] Mapper 005 - ExROM/MMC5
-    - [x] Mapper 007 - AxROM
-    - [x] Mapper 009 - PxROM/MMC2
-    - [ ] Mapper 010 - FxROM/MMC4
-    - [ ] Mapper 011 - Color Dreams
-    - [ ] Mapper 019 - Namco 163
-    - [ ] Mapper 023 - VRC2b/VRC4e
-    - [ ] Mapper 025 - VRC4b/VRC4d
-    - [x] Mapper 024 - VRC6a
-    - [x] Mapper 026 - VRC6b
-    - [ ] Mapper 034 - BNROM/NINA-001
-    - [ ] Mapper 064 - RAMBO-1
-    - [x] Mapper 066 - GxROM/MxROM
-    - [ ] Mapper 068 - After Burner
-    - [ ] Mapper 069 - FME-7/Sunsoft 5B
-    - [x] Mapper 071 - Camerica/Codemasters/BF909x
-    - [ ] Mapper 079 - NINA-03/NINA-06
-    - [x] Mapper 155 - MMC1A
-    - [ ] Mapper 206 - DxROM/Namco 118/MIMIC-1
-- Releases
-  - [ ] macOS Binaries
-  - [ ] Linux Binaries
-  - [ ] Windows Binaries
-- [x] User Interface (UI)
-  - [x] SDL2
-  - [x] WebAssembly (WASM) - Run TetaNES in the browser!
-  - [x] Configurable keybinds and default settings
-  - Menus
-    - [x] Configuration options
-    - [ ] Customize Keybinds & Controllers
-    - [x] Load/Open ROM with file browser
-    - [ ] Recent Game Selection
-    - [x] About Menu
-    - [ ] Config paths overrides
-  - [x] Increase/Decrease Speed
-  - [x] Fast-forward
-  - [x] Instant Rewind (2 seconds)
-  - [x] Visual Rewind (Holding R will time-travel backward)
-  - [x] Save/Load State
-  - [ ] Auto-save
-  - [x] Take Screenshots
-  - [x] Gameplay Recording
-  - [ ] Sound Recording (Save those memorable tunes!)
-  - [x] Toggle Fullscreen
-  - [x] Toggle VSync
-  - [x] Toggle Sound
-    - [x] Toggle individual sound channels
-  - [ ] Toggle FPS
-  - [ ] Toggle Messages
-  - [x] Change Video Filter
-  - Game Genie Support
-    - [x] Command-Line
-    - [ ] UI Menu
-  - [ ] [WideNES](https://prilik.com/ANESE/wideNES)
-  - [ ] Network Multi-player
-  - [ ] Self Updater
-- Testing/Debugging/Documentation
-  - [x] Debugger (Displays CPU/PPU status, registers, and disassembly)
-    - [x] Step Into/Out/Over
-    - [x] Step Scanline/Frame
-    - [ ] Breakpoints
-    - [ ] Modify state
-    - [ ] Labels
-  - [ ] Hex Memory Editor & Debugger
-  - PPU Viewer
-    - [x] Scanline Hit Configuration (For debugging IRQ Nametable changes)
-    - [x] Nametable Viewer (background rendering)
-    - [x] CHR Viewer (sprite tiles)
-    - [ ] OAM Viewer (on screen sprites)
-    - [ ] Palette Viewer
-  - [ ] APU Viewer (Displays audio status and registers)
-  - [x] Automated ROM tests (including [nestest](http://www.qmtpro.com/~nes/misc/nestest.txt))
-  - [ ] Detailed Documentation
-  - Logging
-    - [x] Environment logging
-    - [ ] File logging
-
 ## Known Issues
 
-See the [github issue tracker][].
+See the github issue tracker.
 
 ## Documentation
 
@@ -454,8 +340,8 @@ suggestions. Feel free to submit a pull request if you want to help out!
 
 ### Contact
 
-For issue reporting, please use the [github issue tracker][]. You can also
-contact me directly at <https://lukeworks.tech/contact/>.
+For issue reporting, please use the github issue tracker. You can also
+contact Tonk <hello@tonk.gg>.
 
 ## Changes
 
@@ -464,6 +350,8 @@ _August 29, 2023_
 This source code has been sufficiently modified from the original. Present changes may affect the performance of the emulator and are necessary for integrations into the Dappicom project. If you would like to submit bug reports or somehow have been negatively affected by the execution of the Dappicom source, please reach out to the maintainers of the Dappicom project or submit a bug report in this repository's issues. The original maintainer of the tetanes project has not been involved in this fork of the source code and cannot be held liable for its changes. 
 
 ## Credits
+
+This repository is a fork of the tetanes project originally made by [lukexor](https://github.com/lukexor). 
 
 Implementation was inspiried by several amazing NES projects, without which I
 would not have been able to understand or digest all the information on the NES
