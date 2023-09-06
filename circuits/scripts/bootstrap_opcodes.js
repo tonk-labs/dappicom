@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 function parseFile(inputPath) {
     // Read the file.
@@ -22,6 +23,9 @@ function parseFile(inputPath) {
 
     // Write files for each function name.
     for (const name of functionNames) {
+        // Create new project using nargo
+        execSync(`nargo new ${name}`);
+
         const content = `use dep::helpers;
 
 fn check_op(
@@ -69,7 +73,19 @@ fn check_op(
     )
 }`;
 
-        fs.writeFileSync(`${name}.nr`, content);
+        fs.writeFileSync(`${name}/src/main.nr`, content);
+
+        const newNargo = `[package]
+name = "${name}"
+type = "bin"
+authors = [""]
+compiler_version = "0.10.5"
+
+[dependencies]
+helpers= { path = "../../halpers" }
+`
+        // Overwriting Nargo.toml
+        fs.writeFileSync(`${name}/Nargo.toml`, newNargo);
     }
 }
 

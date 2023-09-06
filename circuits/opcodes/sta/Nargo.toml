@@ -1,0 +1,8 @@
+[package]
+name = "sta"
+type = "bin"
+authors = [""]
+compiler_version = "0.10.5"
+
+[dependencies]
+helpers= { path = "../../halpers" }
