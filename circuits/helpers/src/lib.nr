@@ -1,6 +1,45 @@
 mod addressing;
 mod permutation;
 
+unconstrained fn compute_zn_status(number: Field) -> u8 {
+    let bits = 0 as u8;
+    if (number == 0) {
+        bits = bits & 2;
+    }
+    if (number > 127) {
+        bits = bits & 128;
+    }
+    bits
+}
+
+unconstrained fn update_status(status: Field, new: u8)-> Field {
+    ((status as u8) & new) as Field
+}
+
+unconstrained fn wrapping_add_u16(a: Field, b: Field) -> Field {
+    addressing::wrapping_add_u16(a, b)
+}
+
+struct WrapResult {
+    value: Field,
+    wrapped: bool
+}
+
+unconstrained fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
+    let max = 255;
+    let result = a + b;
+    if (result as u16 > 255) {
+        WrapResult {
+            value: 0,
+            wrapped: true,
+        }
+    } else {
+        WrapResult {
+            value: result,
+            wrapped: false,
+        }
+    }
+}
 
 fn get_addressing(
     mode: Field,

@@ -31,10 +31,10 @@
 fn wrapping_add_u16(a: Field, b: Field) -> Field {
     let max = 65535;
 
-    if ((value as u16) + (b as u16)) > 65535 {
-        (value + b) - 65535
+    if ((a as u16) + (b as u16)) > 65535 {
+        (a + b) - 65535
     } else {
-        value + b
+        a + b
     }
 
 }
