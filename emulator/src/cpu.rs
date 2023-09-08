@@ -733,7 +733,7 @@ impl Cpu {
     #[must_use]
     #[inline]
     fn read_instr(&mut self) -> u8 {
-        let val = self.read(self.pc, Access::Read);
+        let val = self.read(self.pc(), Access::Read);
         self.set_pc(self.pc.wrapping_add(1));
         val
     }

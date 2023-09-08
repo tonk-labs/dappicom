@@ -6,18 +6,18 @@ use dep::helpers;
 //Y = 8202
 //A = 8200
 //SR = 8205
-fn check_op(
+fn main(
     r: Field,
     op_sorted_step: [Field; 21],
     op_sorted_addr: [Field; 21],
     op_sorted_val: [Field; 21],
     op_sorted_op_rw: [Field; 21]
-) -> Field {
+) -> pub Field {
 
-    let index = 0;
-    let padding = false;
-    let end = false;
-    for (let q in 0..20) {
+    let mut index = 0;
+    let mut padding = false;
+    let mut end = false;
+    for q in 0..20 {
         if (op_sorted_addr[index] == 1000000000) {
             padding = true;
         }
@@ -30,28 +30,23 @@ fn check_op(
             assert(op_sorted_op_rw[index] == 0);
             assert(op_sorted_val[index] == 232);
 
-            let mode: Field = 3; //INX is always immediate mode
-            let mut sub_arr_step: [Field; 8] = [0,0,0,0,0,0,0,0];
-            let mut sub_arr_addr: [Field; 8] = [0,0,0,0,0,0,0,0];
-            let mut sub_arr_val: [Field; 8] = [0,0,0,0,0,0,0,0];
-            let mut sub_arr_op_rw: [Field; 8] = [0,0,0,0,0,0,0,0];
-            for i in index..7 {
-                sub_arr_step[i] = op_sorted_step[i];
+            let mut sub_arr_addr: [Field; 2] = [0,0];
+            let mut sub_arr_val: [Field; 2] = [0,0];
+            let mut sub_arr_op_rw: [Field; 2] = [0,0];
+            for i in index..2 {
                 sub_arr_addr[i] = op_sorted_addr[i];
                 sub_arr_val[i] = op_sorted_val[i];
                 sub_arr_op_rw[i] = op_sorted_op_rw[i];
             }
 
-            let addressing: [Field; 3] = helpers::get_addressing(
-                mode,
-                sub_arr_step,
+            let address: Field = helpers::imm(
                 sub_arr_addr,
                 sub_arr_val,
                 sub_arr_op_rw
             );
 
             // add the offset to the index
-            index = index + addressing[2];
+            index = index + address;
 
             // we perform a read of x
             assert(op_sorted_addr[index] == 8201);
@@ -62,7 +57,7 @@ fn check_op(
             // we then perform a write of x + 1
             assert(op_sorted_addr[index] == 8201);
             assert(op_sorted_op_rw[index] == 1);
-            let wadd: WrapResult = helpers::wrapping_add_u8(value, 1);
+            let wadd = helpers::wrapping_add_u8(value, 1);
             assert(op_sorted_val[index] == wadd.value);
             index = index + 1;
 
@@ -71,7 +66,7 @@ fn check_op(
             // first there is a read from the status register
             assert(op_sorted_addr[index] == 8205);
             assert(op_sorted_op_rw[index] == 0);
-            let sr = op_sorted_val;
+            let sr = op_sorted_val[index];
             index = index + 1;
 
             // next there is a write to the status register
