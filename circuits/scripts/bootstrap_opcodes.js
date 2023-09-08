@@ -82,7 +82,7 @@ authors = [""]
 compiler_version = "0.10.5"
 
 [dependencies]
-helpers= { path = "../../halpers" }
+helpers = { path = "../../helpers" }
 `
         // Overwriting Nargo.toml
         fs.writeFileSync(`${name}/Nargo.toml`, newNargo);
