@@ -1,9 +1,10 @@
 # How to add an opcode
 
-The key thing to writing an opcode is to understand the transcript output by the emulator during correct execution. We are simply verifying that the boundary conditions and everything in between for all correct execution. However, at the moment, there's no functionality to generate test transcripts from the emulator so the next best thing is to step through the trace in your head by reading the emulator code. There are a two things to know about the trace which will help you to do this.
+The key thing to writing an opcode is to understand the transcript output by the emulator during correct execution. We are simply verifying the boundary conditions and everything in between for all correct execution. However, at the moment, there's no functionality to generate test transcripts from the emulator so the next best thing is to step through the trace in your head by reading the emulator code. There are a three things to know about the trace which will help you to do this.
 
-1. The trace is written out exclusively as memory reads and writes. The file [dappicom/emulator/src/bus.rs](/emulator/src/bus.rs) handles all reading and writing to memory, so we this is also the same file where we manage the trace. Everytime there is a read or write in the bus, we will write it to the trace. You can check the file and verify it for yourself.
-2. In the trace, the registers are represented as memory cells. In the file [dappicom/emulator/src/cpu.rs](/emulator/src/cpu.rs.) You can see getter and setter functions. In these functions you can see the trace is updated in each getter and setter function. This doesn't prevent any function from modifying the properties directly (and this does happen in certain places). You will have to understand that when the function is used, it updates the trace of the register, but when the property is accessed directly it does not update the trace.
+1. The trace is written out exclusively as memory reads and writes. The file [dappicom/emulator/src/bus.rs](/emulator/src/bus.rs) handles all reading and writing to memory, so this is also the same file where we manage the trace. Everytime there is a read or write in the bus, we will write it to the trace. You can check the file and verify it for yourself.
+2. In the trace, the registers are represented as addressable memory cells. In the file [dappicom/emulator/src/cpu.rs](/emulator/src/cpu.rs.) You can see getter and setter functions. In these functions you can see the trace is updated in each getter and setter function. This doesn't prevent any function from modifying the properties directly (and this does happen in certain places). You will have to understand that when the function is used, it updates the trace of the register, but when the property is accessed directly it does not update the trace.
+3. The trace fed into each opcode circuit is a concatenated list of all the reads and writes of that instruction in order of the opcode execution. For each segment, if none of the instructions opcodes were executed or if there were less reads/writes than input size for the circuit, the trace will pad the end with a value to indicate that we should simply constrain a single constant value for those values (constrain to pad values).
 
 Knowing this information you can then take a look at the [dappicom/emulator/src/cpu/instr.rs](/emulator/src/cpu/instr.rs) file as a jumping off point to understand how each instruction is being executed. At the top, you can see
 ```
@@ -28,8 +29,10 @@ Knowing this information you can then take a look at the [dappicom/emulator/src/
     ];
 ```
 
-This is a mapping of opcodes to (addressing mode, intruction) pair and will help you to use the correct addressing mode from the [helpers](/circuits/helpers/src/lib.nr) module. INX is already implemented and you can go to [dappicom/circuits/opcodes/inx/src/main.nr](/circuits/opcodes/inc/src/main.nr) to see how it was done. Continuing on this example, let's take a look at the `inx` function in the `instr.rs`
+This is a mapping of opcodes to (addressing mode, intruction) pair and will help you to use the correct addressing mode from the [helpers](/circuits/helpers/src/lib.nr) module. INX is already implemented and you can go to [dappicom/circuits/opcodes/inx/src/main.nr](/circuits/opcodes/inc/src/main.nr) to see how it was done. 
 
+If we check the datasheet in `instr.rs`, we can see INX only has one addressing mode (implied addressing), so first we need to call that in the helper module.
+Continuing on this example, let's take a look at the `inx` function in the `instr.rs`
 ```
  #[inline]
  pub(super) fn inx(&mut self) {
@@ -40,12 +43,15 @@ This is a mapping of opcodes to (addressing mode, intruction) pair and will help
  }
 ```
 
-1. First we get the register x using a getter function [check trace read]
-2. Next we do a wrapping add (there is a function to help us in the helpers module)
-3. Finally we set x using the setter function  [check trace write]
-4. Now you can see there is an access to the status register with a getter function [check trace read]
-5. If we look into the [set_zn_status` function, we see that the status register is set directly, so there is nothing to do here
-6. Finally we take the new status (which is accessed directly) and set it using the setter function [check trace write]
 
+1. First we get the register x using a getter function `[requires we verify trace read]`
+2. Next we do a wrapping add (there is a function to help us in the helpers module)
+3. Finally we set x using the setter function  `[requires we verify trace write]`
+4. Now you can see there is an access to the status register with a getter function `[requires we verify trace read]`
+5. If we look into the `set_zn_status` function, we see that the status register is set directly, so there is nothing to do here
+6. Finally we take the new status (which is accessed directly) and set it using the setter function `[requires we verify trace write]`
+
+
+Once we have constrained all the reads and writes we will need to generate the intermediary permutation product and return it which is used to verify correct execution along the recursion tree. All files will need this and it should be present in the stubbed code.
 
 That's all there is to it!
