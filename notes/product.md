@@ -14,7 +14,7 @@ However, this bottleneck is all assuming we can get the proof times down on the 
 
 In addition, with the help of more eyeballs and some time testing, we may identify ways to save on constraints if we bypass the FE entirely for many operations using custom builtins.
 
-Altogether, if we're optimistic and assume a 100x speedup, that gives us 25k steps/s. If we're really optimistic we get 250k steps/s. That's just with one proof. If we parallelize to 80 machines we can then get somewhere in the ballpark of 2M steps/s to 20M steps/s. That puts us in the range of realtime proving. Also considering Risc Zero recently boasted 2Mhz speed using 100 GPUs. We can say that with enough time and patience, we can get to nearly a 1-1 playtime / proving time. 
+Altogether, if we're optimistic and assume several orders of magnitude speedup, worst case 10k steps/s to best case 1M steps/s. That's just with one proof. If we parallelize to 80 machines we can then get somewhere in the ballpark of 800k steps/s to 80M steps/s. The median puts us in the range of realtime proving. Also considering Risc Zero recently boasted 2Mhz speed using 100 GPUs. We can say that with enough time and patience, we can get to nearly a 1-1 playtime / proving time. 
 
 This obviously would cost $$$ for the time on the hardware. Why would you do this? Well, I can think of speedruns or special achievements which unlock other things of value. What's $10-30 to get a rare badge or to prove you are #1 on the speedrun leaderboard?
 

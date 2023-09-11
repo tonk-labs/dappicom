@@ -217,7 +217,7 @@ impl Cpu {
     }
 
     pub fn set_sp(&mut self, val: u8) {
-        self.bus.trace.write(0x200C, val, MachineStateType::SP);
+        self.bus.trace.write(0x200C, val.into(), MachineStateType::SP);
         self.sp = val;
     }
 
