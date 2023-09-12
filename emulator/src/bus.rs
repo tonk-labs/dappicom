@@ -383,12 +383,12 @@ impl Mem for CpuBus {
                 self.trace.read(
                     addr.into(),
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
             //Addresses are already normalized
-            //all mappers do is translate the requested address in 64KB range 
+            //all mappers do is translate the requested address in 64KB range
             //into the normalized address for indexing
             0x4020..=0xFFFF => {
                 let val = match self.mapper().map_peek(addr) {
@@ -396,25 +396,25 @@ impl Mem for CpuBus {
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
-                    },
+                    }
                     MappedRead::PrgRam(addr) => {
                         let val = self.prg_ram[addr];
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
-                    },
+                    }
                     MappedRead::PrgRom(addr) => {
                         let val = self.prg_rom[addr];
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
                     }
@@ -422,84 +422,84 @@ impl Mem for CpuBus {
                 };
                 self.genie_read(addr, val)
             }
-            0x2002 => { 
+            0x2002 => {
                 let val = self.ppu.read_status();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2004 => { 
+            0x2004 => {
                 let val = self.ppu.read_oamdata();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2007 => { 
+            0x2007 => {
                 let val = self.ppu.read_data();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4015 => { 
+            0x4015 => {
                 let val = self.apu.read_status();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4016 => { 
+            0x4016 => {
                 let val = self.input.read(Slot::One, &self.ppu);
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4017 => { 
+            0x4017 => {
                 let val = self.input.read(Slot::Two, &self.ppu);
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => { 
+            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => {
                 let val = self.ppu.open_bus();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x0800..=0x1FFF => { 
+            0x0800..=0x1FFF => {
                 let val = self.read(addr & 0x07FF, _access); // WRAM Mirrors
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2008..=0x3FFF => { 
+            0x2008..=0x3FFF => {
                 let val = self.read(addr & 0x2007, _access); // Ppu Mirrors
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
@@ -517,12 +517,12 @@ impl Mem for CpuBus {
                 self.trace.read(
                     addr.into(),
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
             //Addresses are already normalized
-            //all mappers do is translate the requested address in 64KB range 
+            //all mappers do is translate the requested address in 64KB range
             //into the normalized address for indexing
             0x4020..=0xFFFF => {
                 let val = match self.mapper().map_peek(addr) {
@@ -530,25 +530,25 @@ impl Mem for CpuBus {
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
-                    },
+                    }
                     MappedRead::PrgRam(addr) => {
                         let val = self.prg_ram[addr];
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
-                    },
+                    }
                     MappedRead::PrgRom(addr) => {
                         let val = self.prg_rom[addr];
                         self.trace.read(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                         val
                     }
@@ -556,84 +556,84 @@ impl Mem for CpuBus {
                 };
                 self.genie_read(addr, val)
             }
-            0x2002 => { 
+            0x2002 => {
                 let val = self.ppu.read_status();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2004 => { 
+            0x2004 => {
                 let val = self.ppu.read_oamdata();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2007 => { 
+            0x2007 => {
                 let val = self.ppu.read_data();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4015 => { 
+            0x4015 => {
                 let val = self.apu.read_status();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4016 => { 
+            0x4016 => {
                 let val = self.input.peek(Slot::One, &self.ppu);
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x4017 => { 
+            0x4017 => {
                 let val = self.input.peek(Slot::Two, &self.ppu);
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => { 
+            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => {
                 let val = self.ppu.open_bus();
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x0800..=0x1FFF => { 
+            0x0800..=0x1FFF => {
                 let val = self.peek(addr & 0x07FF, _access); // WRAM Mirrors
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
-            0x2008..=0x3FFF => { 
+            0x2008..=0x3FFF => {
                 let val = self.peek(addr & 0x2007, _access); // Ppu Mirrors
                 self.trace.read(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 val
             }
@@ -648,9 +648,9 @@ impl Mem for CpuBus {
                 self.trace.write(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
-            },
+            }
             0x4020..=0xFFFF => {
                 let prg_ram_enabled = !self.prg_ram.is_empty() && !self.prg_ram_protect;
                 match self.mapper_mut().map_write(addr, val) {
@@ -659,7 +659,7 @@ impl Mem for CpuBus {
                         self.trace.write(
                             addr as u32,
                             val.into(),
-                            crate::trace::MachineStateType::ADDR
+                            crate::trace::MachineStateType::ADDR,
                         );
                     }
                     MappedWrite::PrgRamProtect(protect) => {
@@ -671,261 +671,174 @@ impl Mem for CpuBus {
             }
             0x2000 => {
                 self.ppu.write_ctrl(val);
-                self.trace.write(
-                    0x2000,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2000, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2001 => {
                 self.ppu.write_mask(val);
-                self.trace.write(
-                    0x2001,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2001, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2003 => {
                 self.ppu.write_oamaddr(val);
-                self.trace.write(
-                    0x2003,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2003, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2004 => {
                 self.ppu.write_oamdata(val);
-                self.trace.write(
-                    0x2004,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2004, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2005 => {
                 self.ppu.write_scroll(val);
-                self.trace.write(
-                    0x2005,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2005, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2006 => {
                 self.ppu.write_addr(val);
-                self.trace.write(
-                    0x2006,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2006, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2007 => {
                 self.ppu.write_data(val);
-                self.trace.write(
-                    0x2007,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2007, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4000 => {
                 self.apu.write_ctrl(Channel::Pulse1, val);
-                self.trace.write(
-                    0x4000,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4000, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4001 => {
                 self.apu.write_sweep(Channel::Pulse1, val);
-                self.trace.write(
-                    0x4001,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4001, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4002 => {
                 self.apu.write_timer_lo(Channel::Pulse1, val);
-                self.trace.write(
-                    0x4002,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4002, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4003 => {
                 self.apu.write_timer_hi(Channel::Pulse1, val);
-                self.trace.write(
-                    0x4003,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4003, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4004 => {
                 self.apu.write_ctrl(Channel::Pulse2, val);
-                self.trace.write(
-                    0x4004,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4004, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4005 => {
                 self.apu.write_sweep(Channel::Pulse2, val);
-                self.trace.write(
-                    0x4005,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4005, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4006 => {
                 self.apu.write_timer_lo(Channel::Pulse2, val);
-                self.trace.write(
-                    0x4006
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4006, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4007 => {
                 self.apu.write_timer_hi(Channel::Pulse2, val);
-                self.trace.write(
-                    0x4007,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4007, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4008 => {
                 self.apu.write_linear_counter(Channel::Triangle, val);
-                self.trace.write(
-                    0x4008,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4008, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x400A => {
                 self.apu.write_timer_lo(Channel::Triangle, val);
-                self.trace.write(
-                    0x400A,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x400A, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x400B => {
                 self.apu.write_timer_hi(Channel::Triangle, val);
-                self.trace.write(
-                    0x400B,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x400B, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x400C => {
                 self.apu.write_ctrl(Channel::Noise, val);
-                self.trace.write(
-                    0x400C,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x400C, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x400E => {
                 self.apu.write_timer_lo(Channel::Noise, val);
-                self.trace.write(
-                    0x400E,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x400E, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x400F => {
                 self.apu.write_length(Channel::Noise, val);
-                self.trace.write(
-                    0x400F,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x400F, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4010 => {
                 self.apu.write_timer_lo(Channel::Dmc, val);
-                self.trace.write(
-                    0x4010,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4010, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4011 => {
                 self.apu.write_output(Channel::Dmc, val);
-                self.trace.write(
-                    0x4011,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4011, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4012 => {
                 self.apu.write_addr_load(Channel::Dmc, val);
-                self.trace.write(
-                    0x4012,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4012, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4013 => {
                 self.apu.write_length(Channel::Dmc, val);
-                self.trace.write(
-                    0x4013,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4013, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4014 => {
                 self.oam_dma = true;
                 self.oam_dma_addr = u16::from(val) << 8;
                 self.trace.write(
                     0x4014,
                     self.oam_dma_addr.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
             }
             0x4015 => {
                 self.apu.write_status(val);
-                self.trace.write(
-                    0x4015,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4015, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4016 => {
                 self.input.write(val);
-                self.trace.write(
-                    0x4016,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4016, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x4017 => {
                 self.apu.write_frame_counter(val);
-                self.trace.write(
-                    0x4017,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x4017, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x2002 => {
                 self.ppu.set_open_bus(val);
-                self.trace.write(
-                    0x2002,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR
-                );
-            },
+                self.trace
+                    .write(0x2002, val.into(), crate::trace::MachineStateType::ADDR);
+            }
             0x0800..=0x1FFF => {
                 self.trace.write(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 return self.write(addr & 0x07FF, val, _access); // WRAM Mirrors
-            },
+            }
             0x2008..=0x3FFF => {
                 self.trace.write(
                     addr as u32,
                     val.into(),
-                    crate::trace::MachineStateType::ADDR
+                    crate::trace::MachineStateType::ADDR,
                 );
                 return self.write(addr & 0x2007, val, _access); // Ppu Mirrors
-            },
+            }
             _ => (),
         }
         self.open_bus = val;

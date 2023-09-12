@@ -54,7 +54,7 @@ pub struct NesBuilder {
     speed: Option<f32>,
     genie_codes: Vec<String>,
     debug: bool,
-    trace: bool
+    trace: bool,
 }
 
 impl NesBuilder {
@@ -125,7 +125,6 @@ impl NesBuilder {
         self.genie_codes = codes;
         self
     }
-
 
     pub fn debug(&mut self, debug: bool) -> &mut Self {
         self.debug = debug;

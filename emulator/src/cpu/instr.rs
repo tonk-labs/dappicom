@@ -1297,7 +1297,8 @@ impl Cpu {
         let t = u32::from(self.a() & self.x()).wrapping_sub(u32::from(self.fetched_data));
         self.status();
         self.set_zn_status((t & 0xFF) as u8);
-        self.status.set(Status::C, (((t >> 8) & 0x01) ^ 0x01) == 0x01);
+        self.status
+            .set(Status::C, (((t >> 8) & 0x01) ^ 0x01) == 0x01);
         self.set_status(self.status);
         self.set_x((t & 0xFF) as u8);
     }

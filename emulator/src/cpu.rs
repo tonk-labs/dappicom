@@ -11,8 +11,8 @@ use crate::{
     mapper::Mapper,
     mem::{Access, Mem},
     ppu::Ppu,
+    trace::MachineStateType,
     NesResult,
-    trace::MachineStateType
 };
 use bitflags::bitflags;
 use instr::{
@@ -195,7 +195,9 @@ impl Cpu {
     #[inline]
     #[must_use]
     pub const fn pc(&self) -> u16 {
-        self.bus.trace.read(0x200B, self.pc.into(), MachineStateType::PC);
+        self.bus
+            .trace
+            .read(0x200B, self.pc.into(), MachineStateType::PC);
         self.pc
     }
 
@@ -207,7 +209,9 @@ impl Cpu {
     #[inline]
     #[must_use]
     pub const fn sp(&self) -> u8 {
-        self.bus.trace.read(0x200C, self.sp.into(), MachineStateType::SP);
+        self.bus
+            .trace
+            .read(0x200C, self.sp.into(), MachineStateType::SP);
         self.sp
     }
 
@@ -217,54 +221,72 @@ impl Cpu {
     }
 
     pub fn set_sp(&mut self, val: u8) {
-        self.bus.trace.write(0x200C, val.into(), MachineStateType::SP);
+        self.bus
+            .trace
+            .write(0x200C, val.into(), MachineStateType::SP);
         self.sp = val;
     }
 
     #[inline]
     #[must_use]
     pub const fn a(&self) -> u8 {
-        self.bus.trace.read(0x2008, self.acc.into(), MachineStateType::A);
+        self.bus
+            .trace
+            .read(0x2008, self.acc.into(), MachineStateType::A);
         self.acc
     }
 
     pub fn set_acc(&mut self, val: u8) {
-        self.bus.trace.write(0x2008, val.into(), MachineStateType::A);
+        self.bus
+            .trace
+            .write(0x2008, val.into(), MachineStateType::A);
         self.acc = val;
     }
 
     #[inline]
     #[must_use]
     pub const fn x(&self) -> u8 {
-        self.bus.trace.read(0x2009, self.x.into(), MachineStateType::X);
+        self.bus
+            .trace
+            .read(0x2009, self.x.into(), MachineStateType::X);
         self.x
     }
 
     pub fn set_x(&mut self, val: u8) {
-        self.bus.trace.write(0x2009, val.into(), MachineStateType::X);
+        self.bus
+            .trace
+            .write(0x2009, val.into(), MachineStateType::X);
         self.x = val;
     }
 
     #[inline]
     #[must_use]
     pub const fn y(&self) -> u8 {
-        self.bus.trace.read(0x200A, self.y.into(), MachineStateType::Y);
+        self.bus
+            .trace
+            .read(0x200A, self.y.into(), MachineStateType::Y);
         self.y
     }
 
     pub fn set_y(&mut self, val: u8) {
-        self.bus.trace.write(0x200A, val.into(), MachineStateType::Y);
+        self.bus
+            .trace
+            .write(0x200A, val.into(), MachineStateType::Y);
         self.y = val;
     }
 
     #[inline]
     pub const fn status(&self) -> Status {
-        self.bus.trace.read(0x200D, self.status.bits.into(), MachineStateType::S);
+        self.bus
+            .trace
+            .read(0x200D, self.status.bits.into(), MachineStateType::S);
         self.status
     }
 
     pub fn set_status(&mut self, val: Status) {
-        self.bus.trace.write(0x200D, val.bits.into(), MachineStateType::S);
+        self.bus
+            .trace
+            .write(0x200D, val.bits.into(), MachineStateType::S);
         self.status = val;
     }
 
@@ -459,7 +481,7 @@ impl Cpu {
         // https://www.nesdev.org/wiki/CPU_interrupts#Interrupt_hijacking
         //
         // Set U and !B during push
-        let status = ((self.status()| Status::U) & !Status::B).bits();
+        let status = ((self.status() | Status::U) & !Status::B).bits();
 
         if self.nmi {
             self.nmi = false;
