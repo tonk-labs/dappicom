@@ -8,7 +8,7 @@ The project is in its early stages. There is a loose skeleton structure laid out
 ## What does that mean?
 Hopefully, it means you can play NES ROMs on your local machine and then prove outcomes of that gameplay onchain to trigger downstream rewards/consequences. That's the end goal.
 
-Using zero knowledge to prove off-chain compute *effectively* brings the result of that compute onto the blockchain when it is verified. Think of what you might want to do with NES gameplay when it's composable, permissionless and trustless. We call it the "retro gaming universe".
+Using zero knowledge to prove off-chain compute *effectively* brings the result of that compute onto the blockchain when it is verified. Think of what you might want to do with NES gameplay when it's composable, permissionless and trustless. 
 
 ##  Why are you doing this?
 A whole bunch of reasons!
