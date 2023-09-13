@@ -11,11 +11,12 @@ Hopefully, it means you can play NES ROMs on your local machine and then prove o
 Using zero knowledge to prove off-chain compute *effectively* brings the result of that compute onto the blockchain when it is verified. Think of what you might want to do with NES gameplay when it's composable, permissionless and trustless. We call it the "retro gaming universe".
 
 ##  Why are you doing this?
-1. Because it's fun!
-2. This is a great way to make discoveries about performant zkvm design, especially in the context of onchain games. Good zkvm design is important both for twitchy gamefeel for fully onchain games, and also to facilitate hidden information. Neither of these are trivially possible within a vanilla blockchain execution environment.
-3. The MOS 6502 processor is beautiful and historically significant. While this project aims to emulate the NES, one can adapt it to play games from other computer systems which used the MOS 6502 (Commodore 64, Apple II etcetera). 
-4. There is a homebrew community which still writes programs for these systems. We are interested to see what happens when you blend retro gaming with onchain "metagame" affordances and extensions. 
-
+A whole bunch of reasons!
+1. Dappicom could bootstrap the onchain game catalog with retro games. Today (and despite enormous industry hype) there’s a dearth of actual onchain gaming content. Onchain games also come with a crypto learning curve. Playing NES games is simple, and there is a large catalog of ROMs. (Legally, we want to flag at this point that any ROMs you play on a NES emulator should be your legitimately-owned ROMs!)
+2. Dappicom widens the appeal of onchain games beyond a crypto-native audience. Dappicom doesn’t require a token and nor does it fit the play-to-earn model, which has a controversial reputation in gaming. To prove out the fully-onchain gaming category we need to cross the chasm beyond gamers who play games just to earn tokens. Dappicom could appeal to the retro gaming scene beyond crypto.
+3. Dappicom illustrates the power of provable gaming. Proving speedruns with hidden strategies has never been done before. Speedruns are often contested - for example, Dream’s controversial Minecraft speedrun. You can’t argue with maths, though.
+4. Dappicom can level-up developers in Noir. Noir and other ZK DSLs will be imporant parts of the future internet stack; it’s important to get developers up to speed. The project comes with plenty of documentation to get someone contributing right away. There will be extra material discussing best practices when writing Noir code.
+5. Dappicom stretches Noir in powerful ways. Dappicom shows that Noir has ambitions beyond being a DSL for Aztec protocol, and also has significant performance needs for Noir to match.
 
 ## How does it work?
 
