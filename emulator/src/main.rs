@@ -36,7 +36,7 @@ fn main() -> NesResult<()> {
         .scale(opt.scale)
         .speed(opt.speed)
         .genie_codes(opt.genie_codes)
-        .trace(op.trace)
+        .trace(opt.trace)
         .debug(opt.debug)
         .build()?
         .run()

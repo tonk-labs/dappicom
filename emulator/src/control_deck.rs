@@ -72,7 +72,7 @@ impl ControlDeck {
     #[inline]
     pub fn set_trace(&mut self, trace: bool) {
         self.trace = trace;
-        cpu.set_trace(trace);
+        self.cpu.set_trace(trace);
     }
 
     #[inline]

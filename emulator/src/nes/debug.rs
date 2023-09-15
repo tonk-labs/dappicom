@@ -59,7 +59,7 @@ impl Nes {
                 let mut draw_status = |status: Status, set: char, clear: char| -> PixResult<()> {
                     s.same_line(None);
                     let mut buf = [0; 4];
-                    if cpu.status().contains(status) {
+                    if cpu.peek_status().contains(status) {
                         s.fill(Color::RED);
                         s.text(set.encode_utf8(&mut buf))?;
                     } else {
@@ -83,25 +83,25 @@ impl Nes {
                 s.spacing()?;
                 s.text(&format!(
                     "PC: ${:04X}       A: ${:02X} [{:03}]",
-                    cpu.pc(),
-                    cpu.a(),
-                    cpu.a()
+                    cpu.peek_pc(),
+                    cpu.peek_a(),
+                    cpu.peek_a()
                 ))?;
                 s.text(&format!(
                     "X:  ${:02X} [{:03}]   Y: ${:02X} [{:03}]",
-                    cpu.x(),
-                    cpu.x(),
-                    cpu.y(),
-                    cpu.y()
+                    cpu.peek_x(),
+                    cpu.peek_x(),
+                    cpu.peek_y(),
+                    cpu.peek_y()
                 ))?;
 
                 s.spacing()?;
-                s.text(&format!("Stack: $01{:02X}", cpu.sp()))?;
+                s.text(&format!("Stack: $01{:02X}", cpu.peek_sp()))?;
                 s.push();
                 let bytes_per_row = 8;
                 for (i, offset) in (0xE0..=0xFF).rev().enumerate() {
                     let val = cpu.peek(0x0100 | offset, Access::Dummy);
-                    if u16::from(cpu.sp()) == offset {
+                    if u16::from(cpu.peek_sp()) == offset {
                         s.fill(Color::GREEN);
                     } else {
                         s.fill(Color::GRAY);

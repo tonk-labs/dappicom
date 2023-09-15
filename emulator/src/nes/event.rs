@@ -690,7 +690,7 @@ impl Nes {
     }
 
     fn next_instr(&mut self) -> Instr {
-        let pc = self.control_deck.cpu().pc();
+        let pc = self.control_deck.cpu().peek_pc();
         let opcode = self.control_deck.cpu().peek(pc, Access::Dummy);
         Cpu::INSTRUCTIONS[opcode as usize]
     }
@@ -703,7 +703,7 @@ impl Nes {
         }
         if instr.op() == Operation::JSR {
             let rti_addr = self.control_deck.cpu().peek_stack_u16().wrapping_add(1);
-            while self.control_deck.cpu().pc() != rti_addr {
+            while self.control_deck.cpu().peek_pc() != rti_addr {
                 if let Err(err) = self.control_deck.clock_instr() {
                     self.handle_emulation_error(s, &err)?;
                     break;
