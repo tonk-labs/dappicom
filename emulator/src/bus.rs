@@ -296,6 +296,11 @@ impl CpuBus {
     }
 
     #[inline]
+    pub fn set_filter_trace(&mut self, filter_trace: Option<String>) {
+        self.trace.set_filter_trace(filter_trace);
+    }
+
+    #[inline]
     pub fn set_trace_flag(&mut self, trace: bool) {
         self.trace_flag = trace;
         self.trace.set_trace_flag(trace);

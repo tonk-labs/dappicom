@@ -53,6 +53,7 @@ pub struct NesBuilder {
     scale: Option<f32>,
     speed: Option<f32>,
     genie_codes: Vec<String>,
+    filter_trace: Option<String>,
     debug: bool,
     trace: bool,
 }
@@ -68,6 +69,7 @@ impl NesBuilder {
             scale: None,
             speed: None,
             trace: false,
+            filter_trace: None,
             genie_codes: vec![],
             debug: false,
         }
@@ -115,8 +117,15 @@ impl NesBuilder {
         self
     }
 
+    /// Write out the trace before closing 
     pub fn trace(&mut self, trace: bool) -> &mut Self {
         self.trace = trace;
+        self
+    }
+
+    // Filter the trace to a specific instruction (useful for generating test input for circuits)
+    pub fn filter_trace(&mut self, filter_trace: Option<String>) -> &mut Self {
+        self.filter_trace = filter_trace.clone();
         self
     }
 
@@ -151,12 +160,14 @@ impl NesBuilder {
         control_deck.set_four_player(config.four_player);
         control_deck.connect_zapper(config.zapper);
         control_deck.set_trace(self.trace);
+        control_deck.set_filter_trace(self.filter_trace.clone());
 
         Ok(Nes::new(
             control_deck,
             config,
             self.replay.clone(),
             self.trace,
+            // self.filter_trace.clone(),
             self.debug,
         ))
     }
@@ -207,6 +218,7 @@ pub struct Nes {
     selected_path: usize,
     error: Option<String>,
     trace: bool,
+    // filter_trace: Option<String>,
     confirm_quit: Option<(String, bool)>,
     #[cfg(feature = "profile-rate-control")]
     stats: std::io::BufWriter<std::fs::File>,
@@ -218,6 +230,7 @@ impl Nes {
         config: Config,
         replay_path: Option<PathBuf>,
         trace: bool,
+        // filter_trace: Option<String>,
         debug: bool,
     ) -> Self {
         let audio = AudioMixer::new(
@@ -238,6 +251,7 @@ impl Nes {
             replay_path,
             record_sound: false,
             trace,
+            // filter_trace,
             debug,
             rewind_frame: 0,
             rewind_buffer: VecDeque::new(),
@@ -420,6 +434,9 @@ impl PixEngine for Nes {
     }
 
     fn on_stop(&mut self, s: &mut PixState) -> PixResult<()> {
+        if self.trace {
+            self.control_deck.cpu().bus.trace.serialize_trace()?;
+        }
         if self.control_deck.loaded_rom().is_some() {
             if self.confirm_quit.is_none() {
                 if let Err(err) = self.save_sram() {

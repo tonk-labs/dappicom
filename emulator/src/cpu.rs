@@ -92,7 +92,7 @@ pub struct Cpu {
     x: u8,          // x register
     y: u8,          // y register
     status: Status, // Status Registers
-    bus: CpuBus,
+    pub bus: CpuBus,
     instr: Instr,     // The currently executing instruction
     abs_addr: u16,    // Used memory addresses get set here
     rel_addr: u16,    // Relative address for branch instructions
@@ -233,6 +233,9 @@ impl Cpu {
         self.bus.set_trace_flag(trace);
     }
 
+    pub fn set_filter_trace(&mut self, filter_trace: Option<String>) {
+        self.bus.set_filter_trace(filter_trace);
+    }
     pub fn set_sp(&mut self, val: u8) {
         self.bus
             .trace
@@ -802,6 +805,13 @@ impl Cpu {
         val
     }
 
+    // Reads an instruction byte and increments PC by 1.
+    #[must_use]
+    #[inline]
+    fn peek_instr(&mut self) -> u8 {
+        self.peek(self.pc, Access::Read)
+    }
+
     // Reads an instruction 16-bit word and increments PC by 2.
     #[must_use]
     #[inline]
@@ -1016,8 +1026,11 @@ impl Cpu {
         }
         inspect(self);
 
-        let opcode = self.read_instr(); // Cycle 1 of instruction
-        self.instr = Cpu::INSTRUCTIONS[opcode as usize];
+        self.bus.trace.mark_instr_boundary(); //marks the end of the last opcode
+        let opcode = self.peek_instr(); // does not increment PC, just peeks at the upcoming opcode
+        self.bus.trace.current_instr = Some(Cpu::INSTRUCTIONS[opcode as usize]);
+        self.read_instr(); //this is done for trace purposes
+        self.instr = Cpu::INSTRUCTIONS[opcode as usize]; // Cycle 1 of instruction
 
         match self.instr.addr_mode() {
             IMM => self.imm(),
@@ -1036,7 +1049,7 @@ impl Cpu {
         };
 
         match self.instr.op() {
-            ADC => self.adc(), // ADd with Carry M with A
+            ADC => self.adc(), // Add with Carry M with A
             AND => self.and(), // AND M with A
             ASL => self.asl(), // Arithmatic Shift Left M or A
             BCC => self.bcc(), // Branch on Carry Clear

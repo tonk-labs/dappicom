@@ -37,6 +37,7 @@ fn main() -> NesResult<()> {
         .speed(opt.speed)
         .genie_codes(opt.genie_codes)
         .trace(opt.trace)
+        .filter_trace(opt.instr_name)
         .debug(opt.debug)
         .build()?
         .run()
@@ -73,13 +74,19 @@ struct Opt {
     scale: Option<f32>,
     #[structopt(long = "speed", help = "Emulation speed, defaults to 1.0.")]
     speed: Option<f32>,
+    #[structopt(short = "t", long = "trace", help = "Output trace for Dappicom circuits")]
+    trace: bool,
+    #[structopt(
+        short = "i",
+        long = "instr_name",
+        help = "Name of the instruction"
+    )]
+    instr_name: Option<String>,
     #[structopt(
         short = "g",
         long = "genie-codes",
         help = "List of Game Genie Codes (space separated)."
     )]
-    #[structopt(long = "trace", help = "Output trace for Dappicom circuits")]
-    trace: bool,
     genie_codes: Vec<String>,
     #[structopt(long = "debug", help = "Start debugging")]
     debug: bool,
