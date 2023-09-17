@@ -296,7 +296,12 @@ impl CpuBus {
     }
 
     #[inline]
-    pub const fn set_trace_flag(&mut self, trace: bool) {
+    pub fn set_filter_trace(&mut self, filter_trace: Option<String>) {
+        self.trace.set_filter_trace(filter_trace);
+    }
+
+    #[inline]
+    pub fn set_trace_flag(&mut self, trace: bool) {
         self.trace_flag = trace;
         self.trace.set_trace_flag(trace);
     }
@@ -510,136 +515,38 @@ impl Mem for CpuBus {
         val
     }
 
+    // I'm pretty sure we shouldn't log usage of peek to the trace
+    // but I may be wrong, and so until I'm 100% confident
+    // we can just leave this comment in here.
+    // see commit e32cb1712ba08d7b104260c9f4c7bab251753d18
+    // to get a quick outline of the peek function with trace usage
+    // it needs a few corrections, but is mostly ready to be used.
+
     fn peek(&self, addr: u16, _access: Access) -> u8 {
         match addr {
-            0x0000..=0x07FF => {
-                let val = self.wram[addr as usize];
-                self.trace.read(
-                    addr.into(),
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            //Addresses are already normalized
-            //all mappers do is translate the requested address in 64KB range
-            //into the normalized address for indexing
+            0x0000..=0x07FF => self.wram[addr as usize],
             0x4020..=0xFFFF => {
                 let val = match self.mapper().map_peek(addr) {
-                    MappedRead::Data(val) => {
-                        self.trace.read(
-                            addr as u32,
-                            val.into(),
-                            crate::trace::MachineStateType::ADDR,
-                        );
-                        val
-                    }
-                    MappedRead::PrgRam(addr) => {
-                        let val = self.prg_ram[addr];
-                        self.trace.read(
-                            addr as u32,
-                            val.into(),
-                            crate::trace::MachineStateType::ADDR,
-                        );
-                        val
-                    }
-                    MappedRead::PrgRom(addr) => {
-                        let val = self.prg_rom[addr];
-                        self.trace.read(
-                            addr as u32,
-                            val.into(),
-                            crate::trace::MachineStateType::ADDR,
-                        );
-                        val
-                    }
+                    MappedRead::Data(val) => val,
+                    MappedRead::PrgRam(addr) => self.prg_ram[addr],
+                    MappedRead::PrgRom(addr) => self.prg_rom[addr],
                     _ => self.open_bus,
                 };
                 self.genie_read(addr, val)
             }
-            0x2002 => {
-                let val = self.ppu.read_status();
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x2004 => {
-                let val = self.ppu.read_oamdata();
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x2007 => {
-                let val = self.ppu.read_data();
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x4015 => {
-                let val = self.apu.read_status();
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x4016 => {
-                let val = self.input.peek(Slot::One, &self.ppu);
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x4017 => {
-                let val = self.input.peek(Slot::Two, &self.ppu);
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => {
-                let val = self.ppu.open_bus();
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x0800..=0x1FFF => {
-                let val = self.peek(addr & 0x07FF, _access); // WRAM Mirrors
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
-            0x2008..=0x3FFF => {
-                let val = self.peek(addr & 0x2007, _access); // Ppu Mirrors
-                self.trace.read(
-                    addr as u32,
-                    val.into(),
-                    crate::trace::MachineStateType::ADDR,
-                );
-                val
-            }
+            0x2002 => self.ppu.peek_status(),
+            0x2004 => self.ppu.peek_oamdata(),
+            0x2007 => self.ppu.peek_data(),
+            0x4015 => self.apu.peek_status(),
+            0x4016 => self.input.peek(Slot::One, &self.ppu),
+            0x4017 => self.input.peek(Slot::Two, &self.ppu),
+            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 => self.ppu.open_bus(),
+            0x0800..=0x1FFF => self.peek(addr & 0x07FF, _access), // WRAM Mirrors
+            0x2008..=0x3FFF => self.peek(addr & 0x2007, _access), // Ppu Mirrors
             _ => self.open_bus,
-        };
+        }
     }
+
 
     fn write(&mut self, addr: u16, val: u8, _access: Access) {
         match addr {

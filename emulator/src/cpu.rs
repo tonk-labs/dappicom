@@ -92,7 +92,7 @@ pub struct Cpu {
     x: u8,          // x register
     y: u8,          // y register
     status: Status, // Status Registers
-    bus: CpuBus,
+    pub bus: CpuBus,
     instr: Instr,     // The currently executing instruction
     abs_addr: u16,    // Used memory addresses get set here
     rel_addr: u16,    // Relative address for branch instructions
@@ -194,7 +194,14 @@ impl Cpu {
 
     #[inline]
     #[must_use]
-    pub const fn pc(&self) -> u16 {
+    pub const fn peek_pc(&self) -> u16 {
+        self.pc
+    }
+
+
+    #[inline]
+    #[must_use]
+    pub fn pc(&mut self) -> u16 {
         self.bus
             .trace
             .read(0x200B, self.pc.into(), MachineStateType::PC);
@@ -208,7 +215,13 @@ impl Cpu {
 
     #[inline]
     #[must_use]
-    pub const fn sp(&self) -> u8 {
+    pub const fn peek_sp(&self) -> u8 {
+        self.sp
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn sp(&mut self) -> u8 {
         self.bus
             .trace
             .read(0x200C, self.sp.into(), MachineStateType::SP);
@@ -220,6 +233,9 @@ impl Cpu {
         self.bus.set_trace_flag(trace);
     }
 
+    pub fn set_filter_trace(&mut self, filter_trace: Option<String>) {
+        self.bus.set_filter_trace(filter_trace);
+    }
     pub fn set_sp(&mut self, val: u8) {
         self.bus
             .trace
@@ -229,7 +245,13 @@ impl Cpu {
 
     #[inline]
     #[must_use]
-    pub const fn a(&self) -> u8 {
+    pub const fn peek_a(&self) -> u8 {
+        self.acc
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn a(&mut self) -> u8 {
         self.bus
             .trace
             .read(0x2008, self.acc.into(), MachineStateType::A);
@@ -245,7 +267,13 @@ impl Cpu {
 
     #[inline]
     #[must_use]
-    pub const fn x(&self) -> u8 {
+    pub const fn peek_x(&self) -> u8 {
+        self.x
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn x(&mut self) -> u8 {
         self.bus
             .trace
             .read(0x2009, self.x.into(), MachineStateType::X);
@@ -261,7 +289,13 @@ impl Cpu {
 
     #[inline]
     #[must_use]
-    pub const fn y(&self) -> u8 {
+    pub const fn peek_y(&self) -> u8 {
+        self.y
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn y(&mut self) -> u8 {
         self.bus
             .trace
             .read(0x200A, self.y.into(), MachineStateType::Y);
@@ -276,7 +310,12 @@ impl Cpu {
     }
 
     #[inline]
-    pub const fn status(&self) -> Status {
+    pub const fn peek_status(&self) -> Status {
+        self.status
+    }
+
+    #[inline]
+    pub fn status(&mut self) -> Status {
         self.bus
             .trace
             .read(0x200D, self.status.bits.into(), MachineStateType::S);
@@ -474,7 +513,8 @@ impl Cpu {
     pub fn irq(&mut self) {
         self.read(self.pc, Access::Dummy);
         self.read(self.pc, Access::Dummy);
-        self.push_u16(self.pc());
+        let pc_val = self.pc();
+        self.push_u16(pc_val);
 
         // Pushing status to the stack has to happen after checking NMI since it can hijack the BRK
         // IRQ when it occurs between cycles 4 and 5.
@@ -488,15 +528,15 @@ impl Cpu {
             self.push(status);
             self.status.set(Status::I, true);
             self.set_status(self.status);
-
-            self.set_pc(self.read_u16(Self::NMI_VECTOR));
+            let val = self.read_u16(Self::NMI_VECTOR);
+            self.set_pc(val);
             log::trace!("NMI: {}", self.cycle);
         } else {
             self.push(status);
             self.status.set(Status::I, true);
             self.set_status(self.status);
-
-            self.set_pc(self.read_u16(Self::IRQ_VECTOR));
+            let val = self.read_u16(Self::IRQ_VECTOR);
+            self.set_pc(val);
             log::trace!("IRQ: {}", self.cycle);
         }
     }
@@ -654,16 +694,20 @@ impl Cpu {
     // Push a byte to the stack
     #[inline]
     fn push(&mut self, val: u8) {
-        self.write(Self::SP_BASE | u16::from(self.sp()), val, Access::Write);
-        self.set_sp(self.sp().wrapping_sub(1));
+        let mut sp = self.sp();
+        self.write(Self::SP_BASE | u16::from(sp), val, Access::Write);
+        sp = self.sp();
+        self.set_sp(sp.wrapping_sub(1));
     }
 
     // Pull a byte from the stack
     #[must_use]
     #[inline]
     fn pop(&mut self) -> u8 {
-        self.set_sp(self.sp().wrapping_add(1));
-        self.read(Self::SP_BASE | u16::from(self.sp()), Access::Read)
+        let mut sp = self.sp();
+        self.set_sp(sp.wrapping_add(1));
+        sp = self.sp();
+        self.read(Self::SP_BASE | u16::from(sp), Access::Read)
     }
 
     // Peek byte at the top of the stack
@@ -755,9 +799,17 @@ impl Cpu {
     #[must_use]
     #[inline]
     fn read_instr(&mut self) -> u8 {
-        let val = self.read(self.pc(), Access::Read);
+        let pc = self.pc();
+        let val = self.read(pc, Access::Read);
         self.set_pc(self.pc.wrapping_add(1));
         val
+    }
+
+    // Reads an instruction byte and increments PC by 1.
+    #[must_use]
+    #[inline]
+    fn peek_instr(&mut self) -> u8 {
+        self.peek(self.pc, Access::Read)
     }
 
     // Reads an instruction 16-bit word and increments PC by 2.
@@ -974,8 +1026,11 @@ impl Cpu {
         }
         inspect(self);
 
-        let opcode = self.read_instr(); // Cycle 1 of instruction
-        self.instr = Cpu::INSTRUCTIONS[opcode as usize];
+        self.bus.trace.mark_instr_boundary(); //marks the end of the last opcode
+        let opcode = self.peek_instr(); // does not increment PC, just peeks at the upcoming opcode
+        self.bus.trace.current_instr = Some(Cpu::INSTRUCTIONS[opcode as usize]);
+        self.read_instr(); //this is done for trace purposes
+        self.instr = Cpu::INSTRUCTIONS[opcode as usize]; // Cycle 1 of instruction
 
         match self.instr.addr_mode() {
             IMM => self.imm(),
@@ -994,7 +1049,7 @@ impl Cpu {
         };
 
         match self.instr.op() {
-            ADC => self.adc(), // ADd with Carry M with A
+            ADC => self.adc(), // Add with Carry M with A
             AND => self.and(), // AND M with A
             ASL => self.asl(), // Arithmatic Shift Left M or A
             BCC => self.bcc(), // Branch on Carry Clear

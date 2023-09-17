@@ -9,7 +9,7 @@ use crate::{
     mem::RamState,
     ppu::Ppu,
     video::{Video, VideoFilter},
-    NesResult,
+    NesResult, audio::filter,
 };
 use anyhow::anyhow;
 use std::{io::Read, ops::ControlFlow};
@@ -26,6 +26,7 @@ pub struct ControlDeck {
     cycles_remaining: f32,
     cpu: Cpu,
     trace: bool,
+    filter_trace: Option<String>
 }
 
 impl Default for ControlDeck {
@@ -41,6 +42,7 @@ impl ControlDeck {
         Self {
             running: false,
             trace: false,
+            filter_trace: None,
             ram_state,
             region: NesRegion::default(),
             video: Video::default(),
@@ -70,9 +72,14 @@ impl ControlDeck {
     }
 
     #[inline]
+    pub fn set_filter_trace(&mut self, filter_trace: Option<String>) {
+        self.cpu.set_filter_trace(filter_trace.clone());
+        self.filter_trace = filter_trace;
+    }
+    #[inline]
     pub fn set_trace(&mut self, trace: bool) {
         self.trace = trace;
-        cpu.set_trace(trace);
+        self.cpu.set_trace(trace);
     }
 
     #[inline]
