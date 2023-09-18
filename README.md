@@ -20,6 +20,8 @@ A whole bunch of reasons!
 
 Also, it's fun - and the MOS 6502 is beautiful & historically significant.
 
+Read more about this project on [Substack](https://tonk.substack.com/p/dappicom-community-release).
+
 ## How does it work?
 
 [See roadmap and product flow technical explainer](TECHNICAL.md)
