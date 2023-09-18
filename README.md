@@ -3,7 +3,7 @@
 
 Dappicom is a provable Nintendo Entertainment System emulator written in Noir and Rust. Practically, this is a ZKVM which supports the MOS 6502 instruction set and a few NES specific quirks. The ZKVM is built in Noir (we heard you liked ZKVMs, so we put a ZKVM in your ZKVM).
 
-The project is in its early stages. There is a structure laid out which should make collaboration much easier moving forward. As with all "architecting" there will be gaps that will get filled in as the project matures.
+The project is in its early stages. There is a structure laid out that should make collaboration easy, moving forward. As with all "architecting" there will be gaps that will get filled in as the project matures.
 
 ## What does that mean?
 Hopefully, it means you can play NES ROMs on your local machine and then prove outcomes of that gameplay onchain to trigger downstream rewards/consequences. That's the end goal.
