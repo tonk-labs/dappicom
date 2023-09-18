@@ -58,6 +58,8 @@ Thanks to bugzmanov for their wonderful [write-up](https://bugzmanov.github.io/n
 
 Thanks to [Frank Laub](https://github.com/flaub) at Risc0 for discussions on ZKVM design and feedback on proving MOS 6502 execution.
 
+Shoutout to [Paco Bytes'](https://twitter.com/therealbytes/status/1668301322481704960?s=20) version of onchain NES with precompiles and also [Nalin's](https://twitter.com/nibnalin) Game Boy emulation that used fraud proofs.
+ 
 This project is funded by an [Aztec grant](https://aztec.network/grants/). Without them it wouldn't happen :)
 
 Illustration made by [Hi-Bred](https://hi-bred.net) and may only be used in this project.
