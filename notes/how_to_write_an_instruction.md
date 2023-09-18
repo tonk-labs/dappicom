@@ -55,3 +55,22 @@ Continuing on this example, let's take a look at the `inx` function in the `inst
 Once we have constrained all the reads and writes we will need to generate the intermediary permutation product and return it which is used to verify correct execution along the recursion tree. All files will need this and it should be present in the stubbed code.
 
 That's all there is to it!
+
+## How to generate emulator trace for your instruction and use it for test cases
+
+For example INSTR could be INX, ADC, etc.
+```
+cd emulator
+cargo run --release test_roms/cpu/nestest.nes --trace --instr_name <INSTR>
+```
+
+--trace is a flag to turn on the trace feature in the emulator<br/>
+--instr_name will filter a small subset of the instructions
+
+When the emulator opens, hit enter to run all the tests and then hit CTRL + Q. The emulator will close and you will see a ```trace.json``` file output into the ```emulator/``` directory. This is a human readable format of the trace.
+
+It's possible to generate tests for your INSTR from this trace by doing the following:
+
+```
+node ./circuits/scripts/convert_emulator_trace.js ./emulator/trace.json
+```
