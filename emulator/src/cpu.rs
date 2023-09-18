@@ -565,7 +565,7 @@ impl Cpu {
         // The IRQ status at the end of the second-to-last cycle is what matters,
         // so keep the second-to-last status.
         self.prev_run_irq = self.run_irq;
-        self.run_irq = !self.irq.is_empty() && !self.status().intersects(Status::I);
+        self.run_irq = !self.irq.is_empty() && !self.status.intersects(Status::I);
         if self.run_irq {
             log::trace!("IRQ Level Detected: {}: {:?}", self.cycle, self.irq);
         }

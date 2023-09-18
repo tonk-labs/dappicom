@@ -79,5 +79,21 @@ For now we will go with PPU mirror space, I suppose — 0x2008-0x200D. Many opco
 We should be able to use this information to create an address-cycle sorted list of tuples and an opcode cycle sorted and segmented list of tuples. These inputs are formatted from partitions of the original trace. A merkle tree hash of memory "pages" is computed for the beginning and end of each aggregate proving round (to track memory consistency across aggregations). We will also need to keep track of some "dirty" bits in the circuit to know which pages have been written over and need to be recomputed.
 
 
+## How to generate emulator trace and sample test cases
 
+For example INSTR could be INX, ADC, etc.
+```
+cd emulator
+cargo run --release test_roms/cpu/nestest.nes --trace --instr_name <INSTR>
+```
 
+--trace is a flag to turn on the trace feature in the emulator<br/>
+--instr_name will filter a small subset of the instructions
+
+When the emulator opens, hit enter to run all the tests and then hit CTRL + Q. The emulator will close and you will see a ```trace.json``` file output into the ```emulator/``` directory. This is a human readable format of the trace.
+
+It's possible to generate tests for your INSTR from this trace by doing the following:
+
+```
+node ./circuits/scripts/convert_emulator_trace.js ./emulator/trace.json
+```

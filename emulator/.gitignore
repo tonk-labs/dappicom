@@ -4,3 +4,4 @@ roms/
 tmp/
 test_results*
 target/
+trace.json

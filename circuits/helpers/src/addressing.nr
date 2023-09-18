@@ -51,15 +51,17 @@ fn acc(
 }
 
 fn imp(
-    op_sorted_addr: [Field; 1],
-    op_sorted_val: [Field; 1],
-    op_sorted_op_rw: [Field; 1],
+    op_sorted_addr: [Field; 2],
+    op_sorted_val: [Field; 2],
+    op_sorted_op_rw: [Field; 2],
 ) {
     //kind of a do nothing mode
     // PC is read, 
     assert(op_sorted_addr[0] == 8203);
     assert(op_sorted_op_rw[0] == 0);
+    
     // value at PC is read and thrown away
+    assert(op_sorted_op_rw[1] == 0);
 }
 
 fn imm(

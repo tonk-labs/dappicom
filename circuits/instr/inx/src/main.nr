@@ -1,4 +1,5 @@
 use dep::helpers;
+use dep::std;
 
 
 //PC = 8203
@@ -8,71 +9,79 @@ use dep::helpers;
 //SR = 8205
 fn main(
     r: Field,
-    op_sorted_step: [Field; 10],
-    op_sorted_addr: [Field; 10],
-    op_sorted_val: [Field; 10],
-    op_sorted_op_rw: [Field; 10]
+    op_sorted_step: [Field; 9],
+    op_sorted_addr: [Field; 9],
+    op_sorted_val: [Field; 9],
+    op_sorted_op_rw: [Field; 9]
 ) -> pub Field {
-
-
     assert(op_sorted_addr[0] == 8203);
+    assert(op_sorted_op_rw[0] == 0);
+    let pc = op_sorted_val[0];
+
     // the value here should map to the addr of the next entry
     // but we need to implement "mapping" logic, and I don't
     // have good ideas on how to do that at present
-    assert(op_sorted_op_rw[0] == 0);
-    assert(op_sorted_op_rw[1] == 0);
-    assert(op_sorted_val[1] == 232);
+    // this is especially annoying because mappers are stateful
+    // so it's going to be unconstrained for now
+    //assert(op_sorted_addr[1] == ??);
+
+    // this the address read value should be the opcode
+    assert(op_sorted_val[1] == 232); 
+    assert(op_sorted_op_rw[1] == 0);    
+
+    //next update the PC
+    assert(op_sorted_addr[2] == 8203);
+    assert(op_sorted_op_rw[2] == 1);
+    assert(op_sorted_val[2] == pc + 1);
 
     let mut sub_arr_addr: [Field; 2] = [0,0];
     let mut sub_arr_val: [Field; 2] = [0,0];
     let mut sub_arr_op_rw: [Field; 2] = [0,0];
-    for i in 2..3 {
-        sub_arr_addr[i] = op_sorted_addr[i];
-        sub_arr_val[i] = op_sorted_val[i];
-        sub_arr_op_rw[i] = op_sorted_op_rw[i];
+    let offset = 3;
+    for i in 0..2 {
+        sub_arr_addr[i] = op_sorted_addr[offset + i];
+        sub_arr_val[i] = op_sorted_val[offset + i];
+        sub_arr_op_rw[i] = op_sorted_op_rw[offset + i];
     }
 
-    let address: Field = helpers::imm(
+    helpers::imp(
         sub_arr_addr,
         sub_arr_val,
         sub_arr_op_rw
     );
 
-    // add the offset to the index
-    index = index + address;
-
     // we perform a read of x
-    assert(op_sorted_addr[index] == 8201);
-    assert(op_sorted_op_rw[index] == 0);
-    let value = op_sorted_val[index];
-    index = index + 1;
+    assert(op_sorted_addr[5] == 8201);
+    assert(op_sorted_op_rw[5] == 0);
+    let value = op_sorted_val[5];
 
     // we then perform a write of x + 1
-    assert(op_sorted_addr[index] == 8201);
-    assert(op_sorted_op_rw[index] == 1);
+    assert(op_sorted_addr[6] == 8201);
+    assert(op_sorted_op_rw[6] == 1);
     let wadd = helpers::wrapping_add_u8(value, 1);
-    assert(op_sorted_val[index] == wadd.value);
-    index = index + 1;
+    assert(op_sorted_val[6] == wadd.value);
 
     // we then set a new status into the status register 
 
     // first there is a read from the status register
-    assert(op_sorted_addr[index] == 8205);
-    assert(op_sorted_op_rw[index] == 0);
-    let sr = op_sorted_val[index];
-    index = index + 1;
+    assert(op_sorted_addr[7] == 8205);
+    assert(op_sorted_op_rw[7] == 0);
+    let sr = op_sorted_val[7];
+
+    // std::println(wadd);
+    let mut status = helpers::convert_to_status(sr);
 
     // next there is a write to the status register
     // we need to compute the zero and negative flag
-    let zn = helpers::compute_zn_status(wadd.value);
-    let srnew = helpers::update_status(sr, zn);
-    assert(op_sorted_addr[index] == 8205);
-    assert(op_sorted_op_rw[index] == 1);
-    assert(op_sorted_val[index] == srnew);
-    index = index + 1;
+    status = helpers::compute_zn_status(wadd.value, status);
+    let comp_status = helpers::status_to_num(status);
+    // std::println(status);
+    assert(op_sorted_addr[8] == 8205);
+    assert(op_sorted_op_rw[8] == 1);
+    assert(op_sorted_val[8] == comp_status);
 
     // Compute permutation and return it
-    helpers::compute_permutation(
+    helpers::compute_permutation_9(
         r,
         op_sorted_step,
         op_sorted_addr,
@@ -82,62 +91,62 @@ fn main(
 }
 
 #[test]
-fn test_0() {
+fn test_0() -> Field {
     main(
         1,
-        [405465, 405466, 405467, 405468, 405469, 405470, 405471, 405472, 405473, 405474, 405475],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 0, 1, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343432, 343433, 343434, 343435, 343436, 343437, 343438, 343439, 343440],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 0, 1, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
 #[test]
-fn test_1() {
+fn test_1() -> Field {
     main(
         1,
-        [405540, 405541, 405542, 405543, 405544, 405545, 405546, 405547, 405548, 405549, 405550],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 1, 2, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343492, 343493, 343494, 343495, 343496, 343497, 343498, 343499, 343500],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 1, 2, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
 #[test]
-fn test_2() {
+fn test_2() -> Field {
     main(
         1,
-        [405615, 405616, 405617, 405618, 405619, 405620, 405621, 405622, 405623, 405624, 405625],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 2, 3, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343552, 343553, 343554, 343555, 343556, 343557, 343558, 343559, 343560],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 2, 3, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
 #[test]
-fn test_3() {
+fn test_3() -> Field {
     main(
         1,
-        [405690, 405691, 405692, 405693, 405694, 405695, 405696, 405697, 405698, 405699, 405700],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 3, 4, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343612, 343613, 343614, 343615, 343616, 343617, 343618, 343619, 343620],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 3, 4, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
 #[test]
-fn test_4() {
+fn test_4() -> Field {
     main(
         1,
-        [405765, 405766, 405767, 405768, 405769, 405770, 405771, 405772, 405773, 405774, 405775],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 4, 5, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343672, 343673, 343674, 343675, 343676, 343677, 343678, 343679, 343680],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 4, 5, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
 #[test]
-fn test_5() {
+fn test_5() -> Field {
     main(
         1,
-        [405840, 405841, 405842, 405843, 405844, 405845, 405846, 405847, 405848, 405849, 405850],
-        [8203, 79, 8205, 8203, 8203, 80, 8205, 8201, 8201, 8205, 8205],
-        [49231, 232, 36, 49232, 49232, 224, 36, 5, 6, 36, 36],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1]
+        [343732, 343733, 343734, 343735, 343736, 343737, 343738, 343739, 343740],
+        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
+        [49231, 232, 49232, 49232, 224, 5, 6, 36, 36],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
