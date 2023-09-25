@@ -5,6 +5,8 @@ Dappicom is a provable Nintendo Entertainment System emulator written in Noir an
 
 The project is in its early stages. There is a structure laid out that should make collaboration easy, moving forward. As with all "architecting" there will be gaps that will get filled in as the project matures.
 
+[Link to main project page](https://tonk-gg.github.io/dappicom-site)
+
 ## What does that mean?
 Hopefully, it means you can play NES ROMs on your local machine and then prove outcomes of that gameplay onchain to trigger downstream rewards/consequences. That's the end goal.
 
