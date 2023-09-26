@@ -65,3 +65,5 @@ Shoutout to [Paco Bytes'](https://twitter.com/therealbytes/status/16683013224817
 This project is funded by an [Aztec grant](https://aztec.network/grants/). Without them it wouldn't happen :)
 
 Illustration made by [Hi-Bred](https://hi-bred.net) and may only be used in this project.
+
+Disclaimer: much like nesdev.org, Dappicom is not affiliated with Nintendo and is not for profit.
