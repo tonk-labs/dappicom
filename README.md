@@ -66,4 +66,4 @@ This project is funded by an [Aztec grant](https://aztec.network/grants/). Witho
 
 Illustration made by [Hi-Bred](https://hi-bred.net) and may only be used in this project.
 
-Disclaimer: much like nesdev.org, Dappicom is not affiliated with Nintendo and is not for profit.
+Disclaimer: much like nesdev.org, Dappicom is not affiliated with Nintendo and is not for profit. Any ROMs used on any NES emulator should be your legitimately-owned ROMs.
