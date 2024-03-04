@@ -54,7 +54,7 @@ cargo build
 cargo run
 ```
 
-Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
+Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
 ```
