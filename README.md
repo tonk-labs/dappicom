@@ -54,6 +54,8 @@ cargo build
 cargo run
 ```
 
+If `cargo build`fails with `ld: library not found for -lSDL2` look at <https://github.com/PistonDevelopers/rust-empty/issues/175>
+
 Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
