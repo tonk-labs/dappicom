@@ -35,6 +35,15 @@ That's great! We are actively seeking contributions and are grateful for your su
 The NES emulator will require modifications to output the transcript and snapshot its state in a format most suitable for proving. In the interest of developer velocity, we have gone ahead and forked the tetanes project. For now, it's a submodule. 
 
 Performance is nearly 60fps when using the release build. When running the binary, you can load a test_rom or play the freeware roms in play_rom
+
+First, ensure that you have cloned the `tetanes` submodule
+
+```
+git submodule update --init
+```
+
+Then build tetanes
+
 ```
 cd tetanes
 
