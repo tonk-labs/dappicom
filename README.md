@@ -35,6 +35,15 @@ That's great! We are actively seeking contributions and are grateful for your su
 The NES emulator will require modifications to output the transcript and snapshot its state in a format most suitable for proving. In the interest of developer velocity, we have gone ahead and forked the tetanes project. For now, it's a submodule. 
 
 Performance is nearly 60fps when using the release build. When running the binary, you can load a test_rom or play the freeware roms in play_rom
+
+First, ensure that you have cloned the `tetanes` submodule
+
+```
+git submodule update --init
+```
+
+Then build tetanes
+
 ```
 cd tetanes
 
@@ -45,7 +54,9 @@ cargo build
 cargo run
 ```
 
-Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/getting_started/nargo_installation) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
+If `cargo build`fails with `ld: library not found for -lSDL2` look at <https://github.com/PistonDevelopers/rust-empty/issues/175>
+
+Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
 ```
