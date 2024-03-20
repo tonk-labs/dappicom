@@ -1029,7 +1029,7 @@ impl Cpu {
         self.bus.trace.mark_instr_boundary(); //marks the end of the last opcode
         let opcode = self.peek_instr(); // does not increment PC, just peeks at the upcoming opcode
         self.bus.trace.current_instr = Some(Cpu::INSTRUCTIONS[opcode as usize]);
-        self.read_instr(); //this is done for trace purposes
+        let _ = self.read_instr(); //this is done for trace purposes
         self.instr = Cpu::INSTRUCTIONS[opcode as usize]; // Cycle 1 of instruction
 
         match self.instr.addr_mode() {
