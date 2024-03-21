@@ -12,7 +12,7 @@ enum MemOp {
     Write,
 }
 
-#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Debug)]
 pub enum MachineStateType {
     X,
     Y,
@@ -144,14 +144,14 @@ impl Trace {
                 if self.filter_trace.is_some() {
                     let filtered = filter_by_string(&self.entries, self.filter_trace.as_ref().unwrap().as_str());
 
-                    if (filtered.is_ok()) {
+                    if filtered.is_ok() {
                         let unwrapped_vec = filtered.as_ref().unwrap();
                         let slice_index = unwrapped_vec.iter()
                             .enumerate()
                             .filter(|&(_, &value)| value.etype == MachineStateType::DELIMITER)
                             .nth(5)
                             .map(|(idx, _)| idx);
-                        if (slice_index.is_some()) {
+                        if slice_index.is_some() {
                             munged_ops = unwrapped_vec.iter().take(slice_index.unwrap()).map(|&e| e.clone()).collect();
                             writable = &munged_ops[0..slice_index.unwrap()];
                         } else {

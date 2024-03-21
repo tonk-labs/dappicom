@@ -9,7 +9,7 @@ use crate::{
     mem::RamState,
     ppu::Ppu,
     video::{Video, VideoFilter},
-    NesResult, audio::filter,
+    NesResult,
 };
 use anyhow::anyhow;
 use std::{io::Read, ops::ControlFlow};
