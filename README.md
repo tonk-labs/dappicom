@@ -51,6 +51,20 @@ cargo run
 
 If `cargo build`fails with `ld: library not found for -lSDL2` look at <https://github.com/PistonDevelopers/rust-empty/issues/175>
 
+For Linux users with linker issues , download the tar.gz file with the latest version from [here](https://github.com/libsdl-org/SDL/releases/tag/release-2.30.1) and follow the procedure.
+```
+tar xvf SDL2-2.0.30.tar.gz
+cd SDL2-2.0.30
+./configure
+make
+sudo make install
+```
+To make sure linker is pointing to the newly downloaded library during runtime add this line to *.bashrc* .
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+```
+Open a new terminal session and build/run again after cleaning the previous build.
+ 
 Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
