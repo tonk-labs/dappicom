@@ -30,7 +30,7 @@
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     let max = 65535;
 
-    if ((a as u32) + (b as u32)) > 65535 {
+    if ((a as u32) + (b as u32)) > max {
         (a + b) - 65535
     } else {
         a + b
@@ -40,7 +40,7 @@ pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
 
 pub fn acc(
     op_sorted_addr: [Field; 1],
-    op_sorted_val: [Field; 1],
+    _op_sorted_val: [Field; 1],
     op_sorted_op_rw: [Field; 1],
 ) {
     // also kind of a do nothing mode
@@ -52,7 +52,7 @@ pub fn acc(
 
 pub fn imp(
     op_sorted_addr: [Field; 2],
-    op_sorted_val: [Field; 2],
+    _op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
 ) {
     //kind of a do nothing mode

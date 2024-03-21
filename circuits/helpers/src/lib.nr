@@ -66,7 +66,7 @@ struct WrapResult {
 pub fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
     let max = 255;
     let result = a + b;
-    if (result as u32 > 255) {
+    if (result as u32 > max) {
         WrapResult {
             value: 0,
             wrapped: true,
