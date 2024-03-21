@@ -2,18 +2,18 @@ mod addressing;
 mod permutation;
 
 struct Status {
-    C: u16, // Carry
-    Z: u16, // Zero
-    I: u16, // Disable Interrupt
-    D: u16, // Decimal Mode
-    B: u16, // Break
-    U: u16, // Unused
-    V: u16, // Overflow
-    N: u16, // Negative
+    C: u32, // Carry
+    Z: u32, // Zero
+    I: u32, // Disable Interrupt
+    D: u32, // Decimal Mode
+    B: u32, // Break
+    U: u32, // Unused
+    V: u32, // Overflow
+    N: u32, // Negative
 }
 
 unconstrained fn convert_to_status(n: Field) -> Status {
-    let number = n as u16;
+    let number = n as u32;
     let status = Status {
         C: number & 1,
         Z: number & 2,
@@ -28,7 +28,7 @@ unconstrained fn convert_to_status(n: Field) -> Status {
 }
 
 unconstrained fn status_to_num(status: Status) -> Field {
-    let mut number = 0 as u16;
+    let mut number = 0 as u32;
      number = number | status.C & 1;
      number = number | status.Z & 2;
      number = number | status.I & 4;
@@ -66,7 +66,7 @@ struct WrapResult {
 fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
     let max = 255;
     let result = a + b;
-    if (result as u16 > 255) {
+    if (result as u32 > 255) {
         WrapResult {
             value: 0,
             wrapped: true,
