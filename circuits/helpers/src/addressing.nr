@@ -27,7 +27,7 @@
 //Y = 8202
 //A = 8200
 
-fn wrapping_add_u16(a: Field, b: Field) -> Field {
+pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     let max = 65535;
 
     if ((a as u32) + (b as u32)) > 65535 {
@@ -38,7 +38,7 @@ fn wrapping_add_u16(a: Field, b: Field) -> Field {
 
 }
 
-fn acc(
+pub fn acc(
     op_sorted_addr: [Field; 1],
     op_sorted_val: [Field; 1],
     op_sorted_op_rw: [Field; 1],
@@ -50,7 +50,7 @@ fn acc(
     // value at PC is read and thrown away
 }
 
-fn imp(
+pub fn imp(
     op_sorted_addr: [Field; 2],
     op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
@@ -64,7 +64,7 @@ fn imp(
     assert(op_sorted_op_rw[1] == 0);
 }
 
-fn imm(
+pub fn imm(
     op_sorted_addr: [Field; 2],
     op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
@@ -82,7 +82,7 @@ fn imm(
     address
 }
 
-fn zpo(
+pub fn zpo(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -103,7 +103,7 @@ fn zpo(
     value
 }
 
-fn zpx_zpy(
+pub fn zpx_zpy(
     mode: Field,
     op_sorted_addr: [Field; 5],
     op_sorted_val: [Field; 5],
@@ -139,7 +139,7 @@ fn zpx_zpy(
     wrapping_add_u16(value, indexValue)
 }
 
-fn rel(
+pub fn rel(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -160,7 +160,7 @@ fn rel(
     value
 }
 
-fn abs(
+pub fn abs(
     op_sorted_addr: [Field; 6],
     op_sorted_val: [Field; 6],
     op_sorted_op_rw: [Field; 6],
@@ -192,7 +192,7 @@ fn abs(
     ((hi as u8) << 8 | (lo as u8)) as Field
 }
 
-fn abx_aby(
+pub fn abx_aby(
     mode: Field,
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
@@ -247,7 +247,7 @@ fn abx_aby(
     [abs_addr, op_sorted_val[7]]
 }
 
-fn ind(
+pub fn ind(
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
     op_sorted_op_rw: [Field; 8],
@@ -308,7 +308,7 @@ fn ind(
     }
 }
 
-fn idx(
+pub fn idx(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
@@ -346,7 +346,7 @@ fn idx(
         ((hi as u32) << 8 | (lo as u32)) as Field
 }
 
-fn idy(
+pub fn idy(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],

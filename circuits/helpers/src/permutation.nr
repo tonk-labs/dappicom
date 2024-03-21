@@ -1,5 +1,5 @@
 
-fn compute_21(
+pub fn compute_21(
     r: Field,
     op_sorted_step: [Field; 21],
     op_sorted_addr: [Field; 21],
@@ -10,7 +10,7 @@ fn compute_21(
     0
 }
 
-fn compute_9(
+pub fn compute_9(
     r: Field,
     op_sorted_step: [Field; 9],
     op_sorted_addr: [Field; 9],
