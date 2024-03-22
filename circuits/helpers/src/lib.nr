@@ -77,17 +77,22 @@ pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     if (number == 0) {
         status.Z = 2;
         // bits = bits & 2;
+    } else {
+        status.Z = 0;
     }
+
     if (number as u8 > 127) {
         status.N = 128;
         // bits = bits & 128;
+    } else {
+        status.N = 0;
     }
     // bits
     status
 }
 
 #[test]
-fn test_compute_sn_status_0() {
+fn test_compute_sn_empty_status() {
     let status = Status {
         C: 0,
         Z: 0,
@@ -104,6 +109,25 @@ fn test_compute_sn_status_0() {
 
     let computed_status = compute_zn_status(200, status);
     assert(computed_status.N == 128);
+}
+
+#[test]
+fn test_compute_sn_non_empty_status() {
+    let status = Status {
+        C: 1,
+        Z: 2,
+        I: 4,
+        D: 8,
+        B: 16,
+        U: 32,
+        V: 64,
+        N: 128
+    };
+
+    // should reverse Z
+    let computed_status = compute_zn_status(1, status);
+    assert(computed_status.Z == 0);
+    assert(computed_status.N == 0);
 }
 
 
