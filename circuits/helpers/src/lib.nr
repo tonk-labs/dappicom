@@ -79,6 +79,22 @@ fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
     }
 }
 
+pub fn wrapping_dec_u8(a: Field, b: Field) -> WrapResult {
+    let result = a - b;
+
+    if (result as i32 < 0) {
+        WrapResult {
+            value: 255,
+            wrapped: true,
+        }
+    } else {
+        WrapResult {
+            value: result,
+            wrapped: false,
+        }
+    }
+}
+
 fn acc(
     op_sorted_addr: [Field; 1],
     op_sorted_val: [Field; 1],
