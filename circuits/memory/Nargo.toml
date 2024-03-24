@@ -2,6 +2,6 @@
 name = "memory"
 authors = ["Goblin Oats"]
 type = "bin"
-compiler_version = "0.9.0"
+compiler_version = ">=0.9.0"
 
 [dependencies]

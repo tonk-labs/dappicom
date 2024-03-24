@@ -2,18 +2,18 @@ mod addressing;
 mod permutation;
 
 struct Status {
-    C: u16, // Carry
-    Z: u16, // Zero
-    I: u16, // Disable Interrupt
-    D: u16, // Decimal Mode
-    B: u16, // Break
-    U: u16, // Unused
-    V: u16, // Overflow
-    N: u16, // Negative
+    C: u32, // Carry
+    Z: u32, // Zero
+    I: u32, // Disable Interrupt
+    D: u32, // Decimal Mode
+    B: u32, // Break
+    U: u32, // Unused
+    V: u32, // Overflow
+    N: u32, // Negative
 }
 
-unconstrained fn convert_to_status(n: Field) -> Status {
-    let number = n as u16;
+unconstrained pub fn convert_to_status(n: Field) -> Status {
+    let number = n as u32;
     let status = Status {
         C: number & 1,
         Z: number & 2,
@@ -27,8 +27,8 @@ unconstrained fn convert_to_status(n: Field) -> Status {
     status
 }
 
-unconstrained fn status_to_num(status: Status) -> Field {
-    let mut number = 0 as u16;
+unconstrained pub fn status_to_num(status: Status) -> Field {
+    let mut number = 0 as u32;
      number = number | status.C & 1;
      number = number | status.Z & 2;
      number = number | status.I & 4;
@@ -40,7 +40,7 @@ unconstrained fn status_to_num(status: Status) -> Field {
      number as Field
 }
 
-fn compute_zn_status(number: Field, mut status: Status) -> Status {
+pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     // let mut bits = 0 as u8;
     if (number == 0) {
         status.Z = 1;
@@ -54,7 +54,7 @@ fn compute_zn_status(number: Field, mut status: Status) -> Status {
     status
 }
 
-fn wrapping_add_u16(a: Field, b: Field) -> Field {
+pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     addressing::wrapping_add_u16(a, b)
 }
 
@@ -63,10 +63,10 @@ struct WrapResult {
     wrapped: bool
 }
 
-fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
+pub fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
     let max = 255;
     let result = a + b;
-    if (result as u16 > 255) {
+    if (result as u32 > max) {
         WrapResult {
             value: 0,
             wrapped: true,
@@ -79,7 +79,7 @@ fn wrapping_add_u8(a: Field, b: Field) -> WrapResult {
     }
 }
 
-fn acc(
+pub fn acc(
     op_sorted_addr: [Field; 1],
     op_sorted_val: [Field; 1],
     op_sorted_op_rw: [Field; 1],
@@ -90,7 +90,7 @@ fn acc(
         op_sorted_op_rw
     )
 }
-fn imp(
+pub fn imp(
     op_sorted_addr: [Field; 2],
     op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
@@ -101,7 +101,7 @@ fn imp(
         op_sorted_op_rw
     )
 }
-fn imm(
+pub fn imm(
     op_sorted_addr: [Field; 2],
     op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
@@ -112,7 +112,7 @@ fn imm(
         op_sorted_op_rw
     )
 }
-fn zpo(
+pub fn zpo(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -123,7 +123,7 @@ fn zpo(
         op_sorted_op_rw
     )
 }
-fn zpx_zpy(
+pub fn zpx_zpy(
     mode: Field,
     op_sorted_addr: [Field; 5],
     op_sorted_val: [Field; 5],
@@ -136,7 +136,7 @@ fn zpx_zpy(
         op_sorted_op_rw
     )
 }
-fn rel(
+pub fn rel(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -147,7 +147,7 @@ fn rel(
         op_sorted_op_rw
     )
 }
-fn abs(
+pub fn abs(
     op_sorted_addr: [Field; 6],
     op_sorted_val: [Field; 6],
     op_sorted_op_rw: [Field; 6],
@@ -158,7 +158,7 @@ fn abs(
         op_sorted_op_rw
     )
 }
-fn abx_aby(
+pub fn abx_aby(
     mode: Field,
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
@@ -171,7 +171,7 @@ fn abx_aby(
         op_sorted_op_rw
     )
 }
-fn ind(
+pub fn ind(
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
     op_sorted_op_rw: [Field; 8],
@@ -182,7 +182,7 @@ fn ind(
         op_sorted_op_rw
     )
 }
-fn idx(
+pub fn idx(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
@@ -193,7 +193,7 @@ fn idx(
         op_sorted_op_rw
     )
 }
-fn idy(
+pub fn idy(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
@@ -205,7 +205,7 @@ fn idy(
     )
 }
 
-fn compute_permutation_9(
+pub fn compute_permutation_9(
     r: Field,
     op_sorted_step: [Field; 9],
     op_sorted_addr: [Field; 9],
@@ -220,7 +220,7 @@ fn compute_permutation_9(
         op_sorted_op_rw
     )
 }
-fn compute_permutation_21(
+pub fn compute_permutation_21(
     r: Field,
     op_sorted_step: [Field; 21],
     op_sorted_addr: [Field; 21],

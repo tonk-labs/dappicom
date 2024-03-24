@@ -79,7 +79,7 @@ fn check_op(
 name = "${name}"
 type = "bin"
 authors = [""]
-compiler_version = "0.10.5"
+compiler_version = ">=0.10.5"
 
 [dependencies]
 helpers = { path = "../../helpers" }
