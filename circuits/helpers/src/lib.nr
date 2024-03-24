@@ -27,6 +27,21 @@ unconstrained pub fn convert_to_status(n: Field) -> Status {
     status
 }
 
+#[test]
+fn test_convert_to_status() {
+    let sr = 0x26; // 0 0 1 0 0 1 1 0 -> 0 1 1 0 0 1 0 0 reversed
+
+    let status = convert_to_status(sr);
+    assert(status.C == 0);
+    assert(status.Z == 2);
+    assert(status.I == 4);
+    assert(status.D == 0);
+    assert(status.B == 0);
+    assert(status.U == 32);
+    assert(status.V == 0);
+    assert(status.N == 0);
+}
+
 unconstrained pub fn status_to_num(status: Status) -> Field {
     let mut number = 0 as u32;
      number = number | status.C & 1;
@@ -40,19 +55,83 @@ unconstrained pub fn status_to_num(status: Status) -> Field {
      number as Field
 }
 
+#[test]
+fn test_status_to_num() {
+    let status = Status {
+        C: 0,
+        Z: 2,
+        I: 4,
+        D: 0,
+        B: 0,
+        U: 32,
+        V: 0,
+        N: 128
+    };
+    let num = status_to_num(status);
+
+    assert(num == 0xa6); // 1 0 1 0 0 1 1 0 -> 0 1 1 0 0 1 0 1 reversed
+}
+
+
 pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     // let mut bits = 0 as u8;
     if (number == 0) {
-        status.Z = 1;
+        status.Z = 2;
         // bits = bits & 2;
+    } else {
+        status.Z = 0;
     }
+
     if (number as u8 > 127) {
-        status.N = 1;
+        status.N = 128;
         // bits = bits & 128;
+    } else {
+        status.N = 0;
     }
     // bits
     status
 }
+
+#[test]
+fn test_compute_sn_empty_status() {
+    let status = Status {
+        C: 0,
+        Z: 0,
+        I: 0,
+        D: 0,
+        B: 0,
+        U: 0,
+        V: 0,
+        N: 0
+    };
+
+    let computed_status = compute_zn_status(0, status);
+    assert(computed_status.Z == 2);
+
+    let computed_status = compute_zn_status(200, status);
+    assert(computed_status.N == 128);
+}
+
+#[test]
+fn test_compute_sn_non_empty_status() {
+    let status = Status {
+        C: 1,
+        Z: 2,
+        I: 4,
+        D: 8,
+        B: 16,
+        U: 32,
+        V: 64,
+        N: 128
+    };
+
+    // should reverse Z
+    let computed_status = compute_zn_status(1, status);
+    assert(computed_status.Z == 0);
+    assert(computed_status.N == 0);
+}
+
+
 
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     addressing::wrapping_add_u16(a, b)
@@ -95,6 +174,7 @@ pub fn wrapping_dec_u8(a: Field, b: Field) -> WrapResult {
     }
 }
 
+
 pub fn clear_interrupt_bit(mut status:Status) -> Status{
    
    status.I = 0;
@@ -123,6 +203,7 @@ pub fn clear_decimal_bit(mut status:Status) -> Status {
 
     status
 }
+
 
 pub fn acc(
     op_sorted_addr: [Field; 1],

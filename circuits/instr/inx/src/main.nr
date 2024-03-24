@@ -1,12 +1,11 @@
+use dep::constants::{PC_ADDR, A_ADDR, X_ADDR, Y_ADDR, SR_ADDR};
 use dep::helpers;
 use dep::std;
 
+pub fn OPCODE_VALUE() -> Field {
+    232
+}
 
-//PC = 8203
-//X = 8201
-//Y = 8202
-//A = 8200
-//SR = 8205
 fn main(
     r: Field,
     op_sorted_step: [Field; 9],
@@ -14,7 +13,7 @@ fn main(
     op_sorted_val: [Field; 9],
     op_sorted_op_rw: [Field; 9]
 ) -> pub Field {
-    assert(op_sorted_addr[0] == 8203);
+    assert(op_sorted_addr[0] == PC_ADDR());
     assert(op_sorted_op_rw[0] == 0);
     let pc = op_sorted_val[0];
 
@@ -26,11 +25,11 @@ fn main(
     //assert(op_sorted_addr[1] == ??);
 
     // this the address read value should be the opcode
-    assert(op_sorted_val[1] == 232); 
+    assert(op_sorted_val[1] == OPCODE_VALUE()); 
     assert(op_sorted_op_rw[1] == 0);    
 
     //next update the PC
-    assert(op_sorted_addr[2] == 8203);
+    assert(op_sorted_addr[2] == PC_ADDR());
     assert(op_sorted_op_rw[2] == 1);
     assert(op_sorted_val[2] == pc + 1);
 
@@ -51,12 +50,12 @@ fn main(
     );
 
     // we perform a read of x
-    assert(op_sorted_addr[5] == 8201);
+    assert(op_sorted_addr[5] == X_ADDR());
     assert(op_sorted_op_rw[5] == 0);
     let value = op_sorted_val[5];
 
     // we then perform a write of x + 1
-    assert(op_sorted_addr[6] == 8201);
+    assert(op_sorted_addr[6] == X_ADDR());
     assert(op_sorted_op_rw[6] == 1);
     let wadd = helpers::wrapping_add_u8(value, 1);
     assert(op_sorted_val[6] == wadd.value);
@@ -64,7 +63,7 @@ fn main(
     // we then set a new status into the status register 
 
     // first there is a read from the status register
-    assert(op_sorted_addr[7] == 8205);
+    assert(op_sorted_addr[7] == SR_ADDR());
     assert(op_sorted_op_rw[7] == 0);
     let sr = op_sorted_val[7];
 
@@ -76,7 +75,7 @@ fn main(
     status = helpers::compute_zn_status(wadd.value, status);
     let comp_status = helpers::status_to_num(status);
     // std::println(status);
-    assert(op_sorted_addr[8] == 8205);
+    assert(op_sorted_addr[8] == SR_ADDR());
     assert(op_sorted_op_rw[8] == 1);
     assert(op_sorted_val[8] == comp_status);
 
@@ -95,8 +94,8 @@ fn test_0() -> Field {
     main(
         1,
         [343432, 343433, 343434, 343435, 343436, 343437, 343438, 343439, 343440],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 0, 1, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, OPCODE_VALUE(), 224, 0, 1, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
@@ -105,8 +104,8 @@ fn test_1() -> Field {
     main(
         1,
         [343492, 343493, 343494, 343495, 343496, 343497, 343498, 343499, 343500],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 1, 2, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, 49232, 224, 1, 2, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
@@ -115,8 +114,8 @@ fn test_2() -> Field {
     main(
         1,
         [343552, 343553, 343554, 343555, 343556, 343557, 343558, 343559, 343560],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 2, 3, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, 49232, 224, 2, 3, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
@@ -125,8 +124,8 @@ fn test_3() -> Field {
     main(
         1,
         [343612, 343613, 343614, 343615, 343616, 343617, 343618, 343619, 343620],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 3, 4, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, 49232, 224, 3, 4, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
@@ -135,8 +134,8 @@ fn test_4() -> Field {
     main(
         1,
         [343672, 343673, 343674, 343675, 343676, 343677, 343678, 343679, 343680],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 4, 5, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, 49232, 224, 4, 5, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }
@@ -145,8 +144,8 @@ fn test_5() -> Field {
     main(
         1,
         [343732, 343733, 343734, 343735, 343736, 343737, 343738, 343739, 343740],
-        [8203, 79, 8203, 8203, 80, 8201, 8201, 8205, 8205],
-        [49231, 232, 49232, 49232, 224, 5, 6, 36, 36],
+        [PC_ADDR(), 79, PC_ADDR(), PC_ADDR(), 80, X_ADDR(), X_ADDR(), SR_ADDR(), SR_ADDR()],
+        [49231, OPCODE_VALUE(), 49232, 49232, 224, 5, 6, 36, 36],
         [0, 0, 1, 0, 0, 0, 1, 0, 1]
     )
 }

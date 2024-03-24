@@ -61,7 +61,7 @@ function convertSegment(segment) {
 function templateSegment(segmentData, index) {
     return `
 #[test]
-fn test_${index}() {
+fn test_${index}() -> Field {
     main(
         1, 
         [${segmentData.step.join(", ")}], 
