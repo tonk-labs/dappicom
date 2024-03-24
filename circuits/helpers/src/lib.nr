@@ -196,7 +196,34 @@ pub fn clear_carry_bit(mut status:Status) -> Status {
 
 pub fn clear_decimal_bit(mut status:Status) -> Status {
 
-    status.D=0;
+    status.D = 0;
+
+    status
+}
+
+pub fn set_carry_bit(mut status:Status) -> Status {
+    
+    if (status.C == 0) {
+        status.C = 1;
+    }
+
+    status
+}
+
+pub fn set_decimal_bit(mut status:Status) -> Status {
+
+    if (status.D == 0) {
+        status.D = 1;
+    }
+
+    status
+}
+
+pub fn set_interrupt_bit(mut status:Status) -> Status {
+
+    if (status.I == 0) {
+        status.I = 1;
+    }
 
     status
 }
