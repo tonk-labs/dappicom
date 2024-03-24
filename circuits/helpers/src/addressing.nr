@@ -27,10 +27,10 @@
 //Y = 8202
 //A = 8200
 
-fn wrapping_add_u16(a: Field, b: Field) -> Field {
+pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     let max = 65535;
 
-    if ((a as u16) + (b as u16)) > 65535 {
+    if ((a as u32) + (b as u32)) > max {
         (a + b) - 65535
     } else {
         a + b
@@ -38,9 +38,9 @@ fn wrapping_add_u16(a: Field, b: Field) -> Field {
 
 }
 
-fn acc(
+pub fn acc(
     op_sorted_addr: [Field; 1],
-    op_sorted_val: [Field; 1],
+    _op_sorted_val: [Field; 1],
     op_sorted_op_rw: [Field; 1],
 ) {
     // also kind of a do nothing mode
@@ -50,9 +50,9 @@ fn acc(
     // value at PC is read and thrown away
 }
 
-fn imp(
+pub fn imp(
     op_sorted_addr: [Field; 2],
-    op_sorted_val: [Field; 2],
+    _op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
 ) {
     //kind of a do nothing mode
@@ -64,7 +64,7 @@ fn imp(
     assert(op_sorted_op_rw[1] == 0);
 }
 
-fn imm(
+pub fn imm(
     op_sorted_addr: [Field; 2],
     op_sorted_val: [Field; 2],
     op_sorted_op_rw: [Field; 2],
@@ -82,7 +82,7 @@ fn imm(
     address
 }
 
-fn zpo(
+pub fn zpo(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -103,7 +103,7 @@ fn zpo(
     value
 }
 
-fn zpx_zpy(
+pub fn zpx_zpy(
     mode: Field,
     op_sorted_addr: [Field; 5],
     op_sorted_val: [Field; 5],
@@ -139,7 +139,7 @@ fn zpx_zpy(
     wrapping_add_u16(value, indexValue)
 }
 
-fn rel(
+pub fn rel(
     op_sorted_addr: [Field; 3],
     op_sorted_val: [Field; 3],
     op_sorted_op_rw: [Field; 3],
@@ -160,7 +160,7 @@ fn rel(
     value
 }
 
-fn abs(
+pub fn abs(
     op_sorted_addr: [Field; 6],
     op_sorted_val: [Field; 6],
     op_sorted_op_rw: [Field; 6],
@@ -192,7 +192,7 @@ fn abs(
     ((hi as u8) << 8 | (lo as u8)) as Field
 }
 
-fn abx_aby(
+pub fn abx_aby(
     mode: Field,
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
@@ -239,7 +239,7 @@ fn abx_aby(
     // add value of x or y to addr
     let abs_addr = wrapping_add_u16(joint as Field, index);
     // value of Addr is addr + x or y
-    let data_addr = ((joint as u16) & 65280) as u16 | ((abs_addr as u16) & 255) as u16;
+    let data_addr = ((joint as u32) & 65280) as u32 | ((abs_addr as u32) & 255) as u32;
     // read addr & 0xFF00 | Addr & 0x00FF and return as Value
     assert(op_sorted_addr[7] == data_addr as Field);
     assert(op_sorted_op_rw[7] == 0);
@@ -247,7 +247,7 @@ fn abx_aby(
     [abs_addr, op_sorted_val[7]]
 }
 
-fn ind(
+pub fn ind(
     op_sorted_addr: [Field; 8],
     op_sorted_val: [Field; 8],
     op_sorted_op_rw: [Field; 8],
@@ -279,7 +279,7 @@ fn ind(
     // addr is hi << 8 | lo
     let joint_addr = (hi as u8) << 8 | (lo as u8);
     // if addr & 0xFF  == 0xFF
-    if ((joint_addr as u16) & 255) == 255 {
+    if ((joint_addr as u32) & 255) == 255 {
         // read value from addr lo byte
         // read value from addr hi byte
         // return value from hi << 8 | value from lo as Addr
@@ -287,7 +287,7 @@ fn ind(
         assert(op_sorted_op_rw[6] == 0);
         lo = op_sorted_val[6];
 
-        assert(op_sorted_addr[7] == ((joint_addr as u16) & 65280) as Field);
+        assert(op_sorted_addr[7] == ((joint_addr as u32) & 65280) as Field);
         assert(op_sorted_op_rw[7] == 0);
         hi = op_sorted_val[7];
 
@@ -308,7 +308,7 @@ fn ind(
     }
 }
 
-fn idx(
+pub fn idx(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
@@ -343,10 +343,10 @@ fn idx(
         assert(op_sorted_op_rw[5] == 0);
         let hi = op_sorted_val[6];
         // return Addr as hi << 8 | lo
-        ((hi as u16) << 8 | (lo as u16)) as Field
+        ((hi as u32) << 8 | (lo as u32)) as Field
 }
 
-fn idy(
+pub fn idy(
     op_sorted_addr: [Field; 7],
     op_sorted_val: [Field; 7],
     op_sorted_op_rw: [Field; 7],
@@ -370,7 +370,7 @@ fn idy(
     assert(op_sorted_addr[4] == wrapping_add_u16(addr, 1));
     assert(op_sorted_op_rw[4] == 0);
     let hi = op_sorted_val[4];
-    addr = ((hi as u16) << 8 | lo as u16) as Field;
+    addr = ((hi as u32) << 8 | lo as u32) as Field;
     // Read y value
     assert(op_sorted_addr[5] == 8202);
     assert(op_sorted_op_rw[5] == 0);
@@ -378,7 +378,7 @@ fn idy(
     // set Addr to (addr << 8 | lo) + y
     let abs_addr = wrapping_add_u16(addr, yvalue);
     // read addr & 0xFF00 | Addr & 0x00FF and return as Value
-    let data_addr = ((addr as u16) & 65280) | ((abs_addr as u16) & 255);
+    let data_addr = ((addr as u32) & 65280) | ((abs_addr as u32) & 255);
     assert(op_sorted_addr[6] == data_addr as Field);
     assert(op_sorted_op_rw[6] == 0);
     let data_value = op_sorted_val[6];

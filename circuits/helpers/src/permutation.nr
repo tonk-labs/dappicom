@@ -20,3 +20,14 @@ fn compute_9(
     // TODO: implement
     0
 }
+
+fn compute_7(
+    r: Field,
+    op_sorted_step: [Field; 7],
+    op_sorted_addr: [Field; 7],
+    op_sorted_val: [Field; 7],
+    op_sorted_op_rw: [Field; 7]
+) -> Field {
+    // TODO: implement
+    0
+}
