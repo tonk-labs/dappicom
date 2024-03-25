@@ -1,12 +1,11 @@
 use dep::constants::{PC_ADDR, A_ADDR, X_ADDR, Y_ADDR, SR_ADDR};
 use dep::helpers;
-use dep::std;
 
 pub fn OPCODE_VALUE() -> Field {
     202
 }
 
-fn main(
+fn check_op(
     r: Field,
     op_sorted_step: [Field; 9],
     op_sorted_addr: [Field; 9],
