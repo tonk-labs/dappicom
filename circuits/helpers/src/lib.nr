@@ -72,6 +72,7 @@ fn test_status_to_num() {
     assert(num == 0xa6); // 1 0 1 0 0 1 1 0 -> 0 1 1 0 0 1 0 1 reversed
 }
 
+
 pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     // let mut bits = 0 as u8;
     if (number == 0) {
@@ -131,6 +132,7 @@ fn test_compute_sn_non_empty_status() {
 }
 
 
+
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     addressing::wrapping_add_u16(a, b)
 }
@@ -170,6 +172,36 @@ pub fn wrapping_dec_u8(a: Field, b: Field) -> WrapResult {
             wrapped: false,
         }
     }
+}
+
+
+pub fn clear_interrupt_bit(mut status:Status) -> Status{
+   
+   status.I = 0;
+
+   status
+   
+}
+
+pub fn clear_overflow_bit(mut status: Status) -> Status {
+
+    status.V = 0;
+
+    status
+}
+
+pub fn clear_carry_bit(mut status:Status) -> Status {
+
+    status.C = 0;
+
+    status
+}
+
+pub fn clear_decimal_bit(mut status:Status) -> Status {
+
+    status.D=0;
+
+    status
 }
 
 
@@ -314,6 +346,7 @@ pub fn compute_permutation_9(
         op_sorted_op_rw
     )
 }
+
 pub fn compute_permutation_21(
     r: Field,
     op_sorted_step: [Field; 21],
@@ -322,6 +355,22 @@ pub fn compute_permutation_21(
     op_sorted_op_rw: [Field; 21]
 ) -> Field {
     permutation::compute_21(
+        r,
+        op_sorted_step,
+        op_sorted_addr,
+        op_sorted_val,
+        op_sorted_op_rw
+    )
+}
+
+pub fn compute_permutation_7(
+    r: Field,
+    op_sorted_step: [Field; 7],
+    op_sorted_addr: [Field; 7],
+    op_sorted_val: [Field; 7],
+    op_sorted_op_rw: [Field; 7]
+) -> Field {
+    permutation::compute_7(
         r,
         op_sorted_step,
         op_sorted_addr,
