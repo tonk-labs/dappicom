@@ -52,10 +52,10 @@ fn main(
     let sr = op_sorted_val[5];
 
     let mut status = helpers::convert_to_status(sr);
-    
     //set the decimal bit
     status = helpers::set_decimal_bit(status);
     let comp_status = helpers::status_to_num(status);
+
 
     //write on status register 
     assert(op_sorted_addr[6] == 8205);
@@ -107,7 +107,7 @@ fn test_3() -> Field {
         1,
         [343612, 343613, 343614, 343615, 343616, 343617, 343618],
         [8203, 79, 8203, 8203, 80, 8205, 8205],
-        [49231, 248, 49232, 49232, 224, 123, 131],
+        [49231, 248, 49232, 49232, 224, 128, 136],
         [0, 0, 1, 0, 0, 0, 1]
     )
 }
