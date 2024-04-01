@@ -57,7 +57,7 @@ fn main(
     let wadd = helpers::wrapping_dec_u8(value, 1);
     assert(op_sorted_val[6] == wadd.value);
 
-    //read staus register
+    //read status register
     assert(op_sorted_addr[7] == 8205);
     assert(op_sorted_op_rw[7] == 0);
     let sr = op_sorted_val[7];

@@ -71,6 +71,7 @@ fn main(
     )
 }
 
+
 #[test]
 fn test_0() -> Field {
     main(
@@ -131,5 +132,4 @@ fn test_5() -> Field {
         [0, 0, 1, 0, 0, 0, 1]
     )
 }
-
 

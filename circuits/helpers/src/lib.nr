@@ -72,6 +72,7 @@ fn test_status_to_num() {
     assert(num == 0xa6); // 1 0 1 0 0 1 1 0 -> 0 1 1 0 0 1 0 1 reversed
 }
 
+
 pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     // let mut bits = 0 as u8;
     if (number == 0) {
@@ -159,6 +160,7 @@ fn test_changes_in_not_Power_of_two() {
     assert(num2 == 0xaa);
 
 }
+
 
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     addressing::wrapping_add_u16(a, b)
@@ -256,6 +258,36 @@ pub fn set_interrupt_bit(mut status:Status) -> Status {
 
     status
 }
+
+pub fn clear_interrupt_bit(mut status:Status) -> Status{
+   
+   status.I = 0;
+
+   status
+   
+}
+
+pub fn clear_overflow_bit(mut status: Status) -> Status {
+
+    status.V = 0;
+
+    status
+}
+
+pub fn clear_carry_bit(mut status:Status) -> Status {
+
+    status.C = 0;
+
+    status
+}
+
+pub fn clear_decimal_bit(mut status:Status) -> Status {
+
+    status.D=0;
+
+    status
+}
+
 
 pub fn acc(
     op_sorted_addr: [Field; 1],
@@ -398,6 +430,7 @@ pub fn compute_permutation_9(
         op_sorted_op_rw
     )
 }
+
 pub fn compute_permutation_21(
     r: Field,
     op_sorted_step: [Field; 21],
