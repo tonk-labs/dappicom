@@ -15,14 +15,14 @@ struct Status {
 unconstrained pub fn convert_to_status(n: Field) -> Status {
     let number = n as u32;
     let status = Status {
-        C: number & 1,
-        Z: number & 2,
-        I: number & 4,
-        D: number & 8,
-        B: number & 16,
-        U: number & 32,
-        V: number & 64,
-        N: number & 128
+        C:  number & 1,
+        Z: (number >> 1) & 1,
+        I: (number >> 2) & 1,
+        D: (number >> 3) & 1,
+        B: (number >> 4) & 1,
+        U: (number >> 5) & 1,
+        V: (number >> 6) & 1,
+        N: (number >> 7) & 1
     };
     status
 }
@@ -33,11 +33,11 @@ fn test_convert_to_status() {
 
     let status = convert_to_status(sr);
     assert(status.C == 0);
-    assert(status.Z == 2);
-    assert(status.I == 4);
+    assert(status.Z == 1);
+    assert(status.I == 1);
     assert(status.D == 0);
     assert(status.B == 0);
-    assert(status.U == 32);
+    assert(status.U == 1);
     assert(status.V == 0);
     assert(status.N == 0);
 }
@@ -45,13 +45,13 @@ fn test_convert_to_status() {
 unconstrained pub fn status_to_num(status: Status) -> Field {
     let mut number = 0 as u32;
      number = number | status.C & 1;
-     number = number | status.Z & 2;
-     number = number | status.I & 4;
-     number = number | status.D & 8;
-     number = number | status.B & 16;
-     number = number | status.U & 32;
-     number = number | status.V & 64;
-     number = number | status.N & 128;
+     number = number | (status.Z << 1);
+     number = number | (status.I  << 2);
+     number = number | (status.D  << 3);
+     number = number | (status.B  << 4);
+     number = number | (status.U  << 5);
+     number = number | (status.V  << 6);
+     number = number | (status.N  << 7);
      number as Field
 }
 
@@ -59,13 +59,13 @@ unconstrained pub fn status_to_num(status: Status) -> Field {
 fn test_status_to_num() {
     let status = Status {
         C: 0,
-        Z: 2,
-        I: 4,
+        Z: 1,
+        I: 1,
         D: 0,
         B: 0,
-        U: 32,
+        U: 1,
         V: 0,
-        N: 128
+        N: 1
     };
     let num = status_to_num(status);
 
@@ -76,14 +76,14 @@ fn test_status_to_num() {
 pub fn compute_zn_status(number: Field, mut status: Status) -> Status {
     // let mut bits = 0 as u8;
     if (number == 0) {
-        status.Z = 2;
+        status.Z = 1;
         // bits = bits & 2;
     } else {
         status.Z = 0;
     }
 
     if (number as u8 > 127) {
-        status.N = 128;
+        status.N = 1;
         // bits = bits & 128;
     } else {
         status.N = 0;
@@ -106,23 +106,23 @@ fn test_compute_sn_empty_status() {
     };
 
     let computed_status = compute_zn_status(0, status);
-    assert(computed_status.Z == 2);
+    assert(computed_status.Z == 1);
 
     let computed_status = compute_zn_status(200, status);
-    assert(computed_status.N == 128);
+    assert(computed_status.N == 1);
 }
 
 #[test]
 fn test_compute_sn_non_empty_status() {
     let status = Status {
         C: 1,
-        Z: 2,
-        I: 4,
-        D: 8,
-        B: 16,
-        U: 32,
-        V: 64,
-        N: 128
+        Z: 1,
+        I: 1,
+        D: 1,
+        B: 1,
+        U: 1,
+        V: 1,
+        N: 1
     };
 
     // should reverse Z
@@ -131,6 +131,35 @@ fn test_compute_sn_non_empty_status() {
     assert(computed_status.N == 0);
 }
 
+#[test]
+
+fn test_changes_in_not_Power_of_two() {
+     
+    let status = Status {
+        C: 0,
+        Z: 1,
+        I: 1,
+        D: 0,
+        B: 0,
+        U: 1,
+        V: 0,
+        N: 1
+    };
+
+    let num = status_to_num(status);
+
+    assert(num == 0xa6); // 1 0 1 0 0 1 1 0 -> 0 1 1 0 0 1 0 1 reversed
+
+    let mut new_status = status;
+
+    new_status.D = 1;
+    new_status.I = 0;
+
+    let num2 = status_to_num(new_status);
+
+    assert(num2 == 0xaa);
+
+}
 
 
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
@@ -174,6 +203,61 @@ pub fn wrapping_dec_u8(a: Field, b: Field) -> WrapResult {
     }
 }
 
+pub fn clear_interrupt_bit(mut status:Status) -> Status{
+   
+   status.I = 0;
+
+   status
+   
+}
+
+pub fn clear_overflow_bit(mut status: Status) -> Status {
+
+    status.V = 0;
+
+    status
+}
+
+pub fn clear_carry_bit(mut status:Status) -> Status {
+
+    status.C = 0;
+
+    status
+}
+
+pub fn clear_decimal_bit(mut status:Status) -> Status {
+
+    status.D = 0;
+
+    status
+}
+
+pub fn set_carry_bit(mut status:Status) -> Status {
+    
+    if (status.C == 0) {
+        status.C = 1;
+    }
+
+    status
+}
+
+pub fn set_decimal_bit(mut status:Status) -> Status {
+
+    if (status.D == 0) {
+        status.D = 1;
+    }
+
+    status
+}
+
+pub fn set_interrupt_bit(mut status:Status) -> Status {
+
+    if (status.I == 0) {
+        status.I = 1;
+    }
+
+    status
+}
 
 pub fn clear_interrupt_bit(mut status:Status) -> Status{
    

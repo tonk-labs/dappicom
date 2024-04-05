@@ -1,6 +1,5 @@
 use dep::constants::{PC_ADDR, A_ADDR, X_ADDR, Y_ADDR, SR_ADDR};
 use dep::helpers;
-use dep::std;
 
 pub fn OPCODE_VALUE() -> Field {
     202
