@@ -23,6 +23,7 @@ fn check_op(
         sub_arr_val[i] = op_sorted_val[i];
         sub_arr_op_rw[i] = op_sorted_op_rw[i];
     }
+    
     let address_and_value: [Field; 2] = helpers::get_addressing(
         mode,
         sub_arr_step,
