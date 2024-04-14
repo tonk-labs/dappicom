@@ -259,36 +259,6 @@ pub fn set_interrupt_bit(mut status:Status) -> Status {
     status
 }
 
-pub fn clear_interrupt_bit(mut status:Status) -> Status{
-   
-   status.I = 0;
-
-   status
-   
-}
-
-pub fn clear_overflow_bit(mut status: Status) -> Status {
-
-    status.V = 0;
-
-    status
-}
-
-pub fn clear_carry_bit(mut status:Status) -> Status {
-
-    status.C = 0;
-
-    status
-}
-
-pub fn clear_decimal_bit(mut status:Status) -> Status {
-
-    status.D=0;
-
-    status
-}
-
-
 pub fn acc(
     op_sorted_addr: [Field; 1],
     op_sorted_val: [Field; 1],

@@ -5,7 +5,7 @@ pub fn OPCODE_VALUE() -> Field {
     202
 }
 
-fn check_op(
+fn main(
     r: Field,
     op_sorted_step: [Field; 9],
     op_sorted_addr: [Field; 9],
