@@ -189,7 +189,7 @@ pub fn abs(
     assert(op_sorted_op_rw[5] == 1);
     assert(op_sorted_val[5] == wrapping_add_u16(address, 1));
     // return hi << 8 | lo
-    ((hi as u8) << 8 | (lo as u8)) as Field
+    ((hi as u32) << 8 | (lo as u32)) as Field
 }
 
 pub fn abx_aby(
@@ -224,7 +224,7 @@ pub fn abx_aby(
     assert(op_sorted_val[5] == wrapping_add_u16(address, 1));
     
     // calculate joint value
-    let joint = (hi as u8) << 8 | (lo as u8);
+    let joint = (hi as u32) << 8 | (lo as u32);
 
     // read value of x
     if (mode == 0) {
@@ -277,7 +277,7 @@ pub fn ind(
     assert(op_sorted_op_rw[5] == 1);
     assert(op_sorted_val[5] == wrapping_add_u16(address, 1));
     // addr is hi << 8 | lo
-    let joint_addr = (hi as u8) << 8 | (lo as u8);
+    let joint_addr = (hi as u32) << 8 | (lo as u32);
     // if addr & 0xFF  == 0xFF
     if ((joint_addr as u32) & 255) == 255 {
         // read value from addr lo byte
@@ -291,7 +291,7 @@ pub fn ind(
         assert(op_sorted_op_rw[7] == 0);
         hi = op_sorted_val[7];
 
-        ((hi as u8) << 8 | (lo as u8)) as Field
+        ((hi as u32) << 8 | (lo as u32)) as Field
     } else {
         // read value from addr and set to lo
         // read value from addr + 1 and set to hi
@@ -304,7 +304,7 @@ pub fn ind(
         assert(op_sorted_op_rw[7] == 0);
         hi = op_sorted_val[7];
 
-        ((hi as u8) << 8 | (lo as u8)) as Field
+        ((hi as u32) << 8 | (lo as u32)) as Field
     }
 }
 

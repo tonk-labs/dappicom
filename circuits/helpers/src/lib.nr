@@ -432,3 +432,20 @@ pub fn compute_permutation_7(
         op_sorted_op_rw
     )
 }
+
+pub fn compute_permutation_15(
+    r: Field,
+    op_sorted_step: [Field; 15],
+    op_sorted_addr: [Field; 15],
+    op_sorted_val: [Field; 15],
+    op_sorted_op_rw: [Field; 15]
+) -> Field {
+    
+    permutation::compute_15(
+        r,
+        op_sorted_step,
+        op_sorted_addr,
+        op_sorted_val,
+        op_sorted_op_rw
+    )
+}
