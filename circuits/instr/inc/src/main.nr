@@ -39,6 +39,11 @@ fn main(
     if addressing_option == 230 { //zero page
 
         // 5 nops added 
+        for i in 3..8 {
+          assert(op_sorted_op_rw[i] == 0);
+          assert(op_sorted_addr[i] == 0);
+        }
+
         let mut sub_arr_addr: [Field; 3] = [0, 0, 0];
         let mut sub_arr_val: [Field; 3] = [0, 0, 0];
         let mut sub_arr_op_rw: [Field; 3] = [0, 0, 0];
@@ -54,6 +59,11 @@ fn main(
     } else if addressing_option == 246 { //zero page X
 
         //3 nops added
+        for i in 3..6 {
+          assert(op_sorted_op_rw[i] == 0);
+          assert(op_sorted_addr[i] == 0);
+        }
+
         let mut sub_arr_addr: [Field; 5] = [0, 0, 0, 0, 0];
         let mut sub_arr_val: [Field; 5] = [0, 0, 0, 0, 0];
         let mut sub_arr_op_rw: [Field; 5] = [0, 0, 0, 0, 0];
@@ -69,6 +79,11 @@ fn main(
     } else if addressing_option == 238 { //absolute
 
         //2 nops added 
+        for i in 3..5 {
+          assert(op_sorted_op_rw[i] == 0);
+          assert(op_sorted_addr[i] == 0);
+        }
+        
         let mut sub_arr_addr: [Field; 6] = [0, 0, 0, 0, 0, 0];
         let mut sub_arr_val: [Field; 6] = [0, 0, 0, 0, 0, 0];
         let mut sub_arr_op_rw: [Field; 6] = [0, 0, 0, 0, 0, 0];
