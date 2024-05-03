@@ -41,8 +41,8 @@ fn main(
         // 5 nops added 
 
         for i in 3..8 {
-          assert(op_sorted_op_rw[i] == 0);
-          assert(op_sorted_addr[i] == 0);
+            assert(op_sorted_op_rw[i] == 0);
+            assert(op_sorted_addr[i] == 0);
         }
 
         let mut sub_arr_addr: [Field; 3] = [0, 0, 0];
@@ -62,8 +62,8 @@ fn main(
         //3 nops added
 
         for i in 3..6 {
-          assert(op_sorted_op_rw[i] == 0);
-          assert(op_sorted_addr[i] == 0);
+            assert(op_sorted_op_rw[i] == 0);
+            assert(op_sorted_addr[i] == 0);
         }
 
         let mut sub_arr_addr: [Field; 5] = [0, 0, 0, 0, 0];
@@ -83,8 +83,8 @@ fn main(
         //2 nops added 
 
         for i in 3..5 {
-          assert(op_sorted_op_rw[i] == 0);
-          assert(op_sorted_addr[i] == 0);
+            assert(op_sorted_op_rw[i] == 0);
+            assert(op_sorted_addr[i] == 0);
         }
 
         let mut sub_arr_addr: [Field; 6] = [0, 0, 0, 0, 0, 0];
