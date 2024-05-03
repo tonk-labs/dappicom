@@ -34,6 +34,18 @@ pub fn compute_7(
     0
 }
 
+pub fn compute_17(
+    _r: Field,
+    _op_sorted_step: [Field; 17],
+    _op_sorted_addr: [Field; 17],
+    _op_sorted_val: [Field; 17],
+    _op_sorted_op_rw: [Field; 17]
+
+) -> Field {
+    // TODO: implement
+    0
+}
+
 pub fn compute_15(
     _r: Field,
     _op_sorted_step: [Field; 15],

@@ -48,7 +48,7 @@ pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
 
 pub fn circuit_NOP(op_sorted_addr: [Field; 1], _op_sorted_val: [Field; 1], op_sorted_op_rw: [Field; 1]) {
     // read and do nothing     
-    assert(op_sorted_addr[0] == 8203);
+    assert(op_sorted_addr[0] == 0);
     assert(op_sorted_op_rw[0] == 0);
 }
 
