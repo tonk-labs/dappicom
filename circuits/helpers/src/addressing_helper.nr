@@ -32,7 +32,7 @@ pub fn is_imm(opcode: Field) -> bool {
 }
 pub fn is_zpo(opcode: Field) -> bool {
     let mut res = false;
-    let opcode_vec = [];
+    let opcode_vec = [198, 230];
     for i in 0..opcode_vec.len() {
         if opcode == opcode_vec[i] {
             res = true;

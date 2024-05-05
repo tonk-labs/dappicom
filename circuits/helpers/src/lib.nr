@@ -329,7 +329,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-6] = op_sorted_op_rw[i];
         }
 
-        addressing::imm(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::imm(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_zpo(opcode) == true {
         //NOPs
         for i in 0..5 {
@@ -354,7 +354,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-5] = op_sorted_op_rw[i];
         }
 
-        addressing::zpo(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::zpo(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_rel(opcode) == true {
         //NOPs
         for i in 0..5 {
@@ -379,7 +379,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-5] = op_sorted_op_rw[i];
         }
 
-        addressing::rel(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::rel(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_zpx_zpy(opcode) == true {
         //NOPs
         for i in 0..3 {
@@ -404,7 +404,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-3] = op_sorted_op_rw[i];
         }
 
-        addressing::zpx_zpy(mode, arr_addr, arr_val, arr_op_rw);
+       let _res = addressing::zpx_zpy(mode, arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_abs(opcode) {
         //NOPs
         for i in 0..2 {
@@ -429,7 +429,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-2] = op_sorted_op_rw[i];
         }
 
-        addressing::abs(arr_addr, arr_val, arr_op_rw);
+       let _res = addressing::abs(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_abx_aby(opcode) {
         let mut arr_addr: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
         let mut arr_val: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -441,7 +441,7 @@ pub fn addressing_helpers(
             arr_op_rw[i] = op_sorted_op_rw[i];
         }
 
-        addressing::abx_aby(mode, arr_addr, arr_val, arr_op_rw);
+       let _res = addressing::abx_aby(mode, arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_ind(opcode) {
         let mut arr_addr: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
         let mut arr_val: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -453,7 +453,7 @@ pub fn addressing_helpers(
             arr_op_rw[i] = op_sorted_op_rw[i];
         }
 
-        addressing::ind(arr_addr, arr_val, arr_op_rw);
+       let _res = addressing::ind(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_idx(opcode) {
         //NOPs
         for i in 0..1 {
@@ -478,7 +478,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-1] = op_sorted_op_rw[i];
         }
 
-        addressing::idx(arr_addr, arr_val, arr_op_rw);
+       let _res = addressing::idx(arr_addr, arr_val, arr_op_rw);
     } else {
         //NOPs
         for i in 0..1 {
@@ -503,7 +503,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-1] = op_sorted_op_rw[i];
         }
 
-        addressing::idy(arr_addr, arr_val, arr_op_rw);
+      let _res =  addressing::idy(arr_addr, arr_val, arr_op_rw);
     }
 }
 
