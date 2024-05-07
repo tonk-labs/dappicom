@@ -34,6 +34,7 @@ fn main(
     let mut sub_arr_val: [Field; 2] = [0,0];
     let mut sub_arr_op_rw: [Field; 2] = [0,0];
     let offset = 3;
+    
     for i in 0..2 {
         sub_arr_addr[i] = op_sorted_addr[offset + i];
         sub_arr_val[i] = op_sorted_val[offset + i];
