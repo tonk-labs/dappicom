@@ -321,8 +321,8 @@ pub fn idx(op_sorted_addr: [Field; 7], op_sorted_val: [Field; 7], op_sorted_op_r
     assert(op_sorted_op_rw[5] == 0);
     let lo = op_sorted_val[5];
     // add 1 to addr and set to hi
-    assert(op_sorted_addr[5] == wrapping_add_u16(addr, 1));
-    assert(op_sorted_op_rw[5] == 0);
+    assert(op_sorted_addr[6] == wrapping_add_u16(addr, 1));
+    assert(op_sorted_op_rw[6] == 0);
     let hi = op_sorted_val[6];
     // return Addr as hi << 8 | lo
     ((hi as u32) << 8 | (lo as u32)) as Field
@@ -344,6 +344,7 @@ pub fn idy(
     // set PC to PC + 1
     assert(op_sorted_addr[2] == 8203);
     assert(op_sorted_op_rw[2] == 1);
+    assert(op_sorted_val[2] == wrapping_add_u16(addr, 1));
     // read addr at value and set to lo
     assert(op_sorted_addr[3] == addr);
     assert(op_sorted_op_rw[3] == 0);

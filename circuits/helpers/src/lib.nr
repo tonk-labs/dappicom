@@ -197,7 +197,7 @@ pub fn wrapping_XOR(a: Field, b: Field) -> WrapResult {
 }
 
 pub fn wrapping_OR(a: Field, b: Field) -> WrapResult {
-    let result = (a as u32) ^ (b as u32); // confirm if u32 or i32 ?
+    let result = (a as u32) | (b as u32); // confirm if u32 or i32 ?
 
     if (result as i32 < 0) {
         WrapResult { value: 255, wrapped: true }
@@ -254,6 +254,8 @@ pub fn set_interrupt_bit(mut status: Status) -> Status {
     status
 }
 
+// code to call functions
+// need to be removed after the logic has transaferred completely to helper
 pub fn acc(op_sorted_addr: [Field; 1], op_sorted_val: [Field; 1], op_sorted_op_rw: [Field; 1]) {
     addressing::acc(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
 }
@@ -633,6 +635,22 @@ pub fn compute_permutation_15(
     op_sorted_op_rw: [Field; 15]
 ) -> Field {
     permutation::compute_15(
+        r,
+        op_sorted_step,
+        op_sorted_addr,
+        op_sorted_val,
+        op_sorted_op_rw
+    )
+}
+
+pub fn compute_permutation_18(
+    r: Field,
+    op_sorted_step: [Field; 18],
+    op_sorted_addr: [Field; 18],
+    op_sorted_val: [Field; 18],
+    op_sorted_op_rw: [Field; 18]
+) -> Field {
+    permutation::compute_18(
         r,
         op_sorted_step,
         op_sorted_addr,
