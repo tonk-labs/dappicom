@@ -123,6 +123,30 @@ fn test_changes_in_not_Power_of_two() {
     assert(num2 == 0xaa);
 }
 
+pub fn compute_ZNV_status(number: Field, mut status: Status, memory_val: Field) -> Status {
+    if (number == 0) {
+        status.Z = 1;
+    } else {
+        status.Z = 0;
+    }
+
+    let val = memory_val as u8;
+
+    if ((val & (1 << 5)) > 0) {
+        status.V = 1;
+    } else {
+        status.V = 0;
+    }
+
+    if ((val & (1 << 6)) > 0) {
+        status.N = 1;
+    } else {
+        status.N = 0;
+    }
+
+    status
+}
+
 pub fn wrapping_add_u16(a: Field, b: Field) -> Field {
     addressing::wrapping_add_u16(a, b)
 }
@@ -149,6 +173,36 @@ pub fn wrapping_dec_u8(a: Field, b: Field) -> WrapResult {
         WrapResult { value: 255, wrapped: true }
     } else {
         WrapResult { value: result, wrapped: false }
+    }
+}
+
+pub fn wrapping_AND(a: Field, b: Field) -> WrapResult {
+    let result = (a as u32) & (b as u32); // confirm if u32 or i32 ?
+
+    if (result as i32 < 0) {
+        WrapResult { value: 255, wrapped: true }
+    } else {
+        WrapResult { value: result as Field, wrapped: false }
+    }
+}
+
+pub fn wrapping_XOR(a: Field, b: Field) -> WrapResult {
+    let result = (a as u32) ^ (b as u32); // confirm if u32 or i32 ?
+
+    if (result as i32 < 0) {
+        WrapResult { value: 255, wrapped: true }
+    } else {
+        WrapResult { value: result as Field, wrapped: false }
+    }
+}
+
+pub fn wrapping_OR(a: Field, b: Field) -> WrapResult {
+    let result = (a as u32) | (b as u32); // confirm if u32 or i32 ?
+
+    if (result as i32 < 0) {
+        WrapResult { value: 255, wrapped: true }
+    } else {
+        WrapResult { value: result as Field, wrapped: false }
     }
 }
 
@@ -200,6 +254,8 @@ pub fn set_interrupt_bit(mut status: Status) -> Status {
     status
 }
 
+// code to call functions
+// need to be removed after the logic has transaferred completely to helper
 pub fn acc(op_sorted_addr: [Field; 1], op_sorted_val: [Field; 1], op_sorted_op_rw: [Field; 1]) {
     addressing::acc(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
 }
@@ -404,7 +460,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-3] = op_sorted_op_rw[i];
         }
 
-       let _res = addressing::zpx_zpy(mode, arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::zpx_zpy(mode, arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_abs(opcode) {
         //NOPs
         for i in 0..2 {
@@ -429,7 +485,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-2] = op_sorted_op_rw[i];
         }
 
-       let _res = addressing::abs(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::abs(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_abx_aby(opcode) {
         let mut arr_addr: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
         let mut arr_val: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -441,7 +497,7 @@ pub fn addressing_helpers(
             arr_op_rw[i] = op_sorted_op_rw[i];
         }
 
-       let _res = addressing::abx_aby(mode, arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::abx_aby(mode, arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_ind(opcode) {
         let mut arr_addr: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
         let mut arr_val: [Field; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -453,7 +509,7 @@ pub fn addressing_helpers(
             arr_op_rw[i] = op_sorted_op_rw[i];
         }
 
-       let _res = addressing::ind(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::ind(arr_addr, arr_val, arr_op_rw);
     } else if addressing_helper::is_idx(opcode) {
         //NOPs
         for i in 0..1 {
@@ -478,7 +534,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-1] = op_sorted_op_rw[i];
         }
 
-       let _res = addressing::idx(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::idx(arr_addr, arr_val, arr_op_rw);
     } else {
         //NOPs
         for i in 0..1 {
@@ -503,7 +559,7 @@ pub fn addressing_helpers(
             arr_op_rw[i-1] = op_sorted_op_rw[i];
         }
 
-      let _res =  addressing::idy(arr_addr, arr_val, arr_op_rw);
+        let _res = addressing::idy(arr_addr, arr_val, arr_op_rw);
     }
 }
 
@@ -579,6 +635,22 @@ pub fn compute_permutation_15(
     op_sorted_op_rw: [Field; 15]
 ) -> Field {
     permutation::compute_15(
+        r,
+        op_sorted_step,
+        op_sorted_addr,
+        op_sorted_val,
+        op_sorted_op_rw
+    )
+}
+
+pub fn compute_permutation_18(
+    r: Field,
+    op_sorted_step: [Field; 18],
+    op_sorted_addr: [Field; 18],
+    op_sorted_val: [Field; 18],
+    op_sorted_op_rw: [Field; 18]
+) -> Field {
+    permutation::compute_18(
         r,
         op_sorted_step,
         op_sorted_addr,
