@@ -11,7 +11,7 @@ pub fn is_acc(opcode: Field) -> bool {
     res
 }
 pub fn is_imp(opcode: Field) -> bool {
-    let opcode_vec = [202, 136, 24, 216, 88, 184, 232, 200, 56, 248, 120, 170, 168, 138];
+    let opcode_vec = [202, 136, 24, 216, 88, 184, 232, 200, 56, 248, 120, 170, 168, 138,152];
     let mut res = false;
     for i in 0..opcode_vec.len() {
         if opcode == opcode_vec[i] {

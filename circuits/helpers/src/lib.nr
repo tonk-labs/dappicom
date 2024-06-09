@@ -254,55 +254,6 @@ pub fn set_interrupt_bit(mut status: Status) -> Status {
     status
 }
 
-// code to call functions
-// need to be removed after the logic has transaferred completely to helper
-pub fn acc(op_sorted_addr: [Field; 1], op_sorted_val: [Field; 1], op_sorted_op_rw: [Field; 1]) {
-    addressing::acc(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn imp(op_sorted_addr: [Field; 2], op_sorted_val: [Field; 2], op_sorted_op_rw: [Field; 2]) {
-    addressing::imp(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn imm(op_sorted_addr: [Field; 2], op_sorted_val: [Field; 2], op_sorted_op_rw: [Field; 2]) -> Field {
-    addressing::imm(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn zpo(op_sorted_addr: [Field; 3], op_sorted_val: [Field; 3], op_sorted_op_rw: [Field; 3]) -> Field {
-    addressing::zpo(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn zpx_zpy(
-    mode: Field,
-    op_sorted_addr: [Field; 5],
-    op_sorted_val: [Field; 5],
-    op_sorted_op_rw: [Field; 5]
-) -> Field {
-    addressing::zpx_zpy(mode, op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn rel(op_sorted_addr: [Field; 3], op_sorted_val: [Field; 3], op_sorted_op_rw: [Field; 3]) -> Field {
-    addressing::rel(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn abs(op_sorted_addr: [Field; 6], op_sorted_val: [Field; 6], op_sorted_op_rw: [Field; 6]) -> Field {
-    addressing::abs(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn abx_aby(
-    mode: Field,
-    op_sorted_addr: [Field; 8],
-    op_sorted_val: [Field; 8],
-    op_sorted_op_rw: [Field; 8]
-) -> [Field; 2] {
-    addressing::abx_aby(mode, op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn ind(op_sorted_addr: [Field; 8], op_sorted_val: [Field; 8], op_sorted_op_rw: [Field; 8]) -> Field {
-    addressing::ind(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn idx(op_sorted_addr: [Field; 7], op_sorted_val: [Field; 7], op_sorted_op_rw: [Field; 7]) -> Field {
-    addressing::idx(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
-pub fn idy(
-    op_sorted_addr: [Field; 7],
-    op_sorted_val: [Field; 7],
-    op_sorted_op_rw: [Field; 7]
-) -> [Field; 2] {
-    addressing::idy(op_sorted_addr, op_sorted_val, op_sorted_op_rw)
-}
 
 // addressing helper function to select the addressing based on the mode 
 pub fn addressing_helpers(
@@ -563,22 +514,6 @@ pub fn addressing_helpers(
     }
 }
 
-pub fn compute_permutation_9(
-    r: Field,
-    op_sorted_step: [Field; 9],
-    op_sorted_addr: [Field; 9],
-    op_sorted_val: [Field; 9],
-    op_sorted_op_rw: [Field; 9]
-) -> Field {
-    permutation::compute_9(
-        r,
-        op_sorted_step,
-        op_sorted_addr,
-        op_sorted_val,
-        op_sorted_op_rw
-    )
-}
-
 pub fn compute_permutation_21(
     r: Field,
     op_sorted_step: [Field; 21],
@@ -587,70 +522,6 @@ pub fn compute_permutation_21(
     op_sorted_op_rw: [Field; 21]
 ) -> Field {
     permutation::compute_21(
-        r,
-        op_sorted_step,
-        op_sorted_addr,
-        op_sorted_val,
-        op_sorted_op_rw
-    )
-}
-
-pub fn compute_permutation_7(
-    r: Field,
-    op_sorted_step: [Field; 7],
-    op_sorted_addr: [Field; 7],
-    op_sorted_val: [Field; 7],
-    op_sorted_op_rw: [Field; 7]
-) -> Field {
-    permutation::compute_7(
-        r,
-        op_sorted_step,
-        op_sorted_addr,
-        op_sorted_val,
-        op_sorted_op_rw
-    )
-}
-
-pub fn compute_permutation_17(
-    r: Field,
-    op_sorted_step: [Field; 17],
-    op_sorted_addr: [Field; 17],
-    op_sorted_val: [Field; 17],
-    op_sorted_op_rw: [Field; 17]
-) -> Field {
-    permutation::compute_17(
-        r,
-        op_sorted_step,
-        op_sorted_addr,
-        op_sorted_val,
-        op_sorted_op_rw
-    )
-}
-
-pub fn compute_permutation_15(
-    r: Field,
-    op_sorted_step: [Field; 15],
-    op_sorted_addr: [Field; 15],
-    op_sorted_val: [Field; 15],
-    op_sorted_op_rw: [Field; 15]
-) -> Field {
-    permutation::compute_15(
-        r,
-        op_sorted_step,
-        op_sorted_addr,
-        op_sorted_val,
-        op_sorted_op_rw
-    )
-}
-
-pub fn compute_permutation_18(
-    r: Field,
-    op_sorted_step: [Field; 18],
-    op_sorted_addr: [Field; 18],
-    op_sorted_val: [Field; 18],
-    op_sorted_op_rw: [Field; 18]
-) -> Field {
-    permutation::compute_18(
         r,
         op_sorted_step,
         op_sorted_addr,
