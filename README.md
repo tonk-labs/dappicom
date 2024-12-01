@@ -65,7 +65,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 ```
 Open a new terminal session and build/run again after cleaning the previous build.
  
-Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
+Noir circuits should have tests being written for them. For those circuits that do have tests you can run them by [installing Noir](https://noir-lang.org/docs/getting_started/noir_installation/) and then in the root folder for example ([/circuits/cpu](/circuits/cpu)) run:
 ```
 nargo test
 ```
